@@ -13,18 +13,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          persist-credentials: true
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Import Polar data
+      - name: Import Polar v4 data
         env:
-          POLAR_ACCESS_TOKEN: ${{ secrets.POLAR_ACCESS_TOKEN }}
-          POLAR_USER_ID: ${{ secrets.POLAR_USER_ID }}
+          POLAR_CLIENT_ID: ${{ secrets.POLAR_CLIENT_ID }}
+          POLAR_CLIENT_SECRET: ${{ secrets.POLAR_CLIENT_SECRET }}
+          POLAR_AUTH_CODE: ${{ secrets.POLAR_AUTH_CODE }}
+          POLAR_REFRESH_TOKEN: ${{ secrets.POLAR_REFRESH_TOKEN }}
+          GH_TOKEN: ${{ secrets.DAYMARK_GH_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_EVENT_NAME: ${{ github.event_name }}
         run: python daymark/polar_sync.py
-      - name: Commit changes if needed
+      - name: Commit new public observations
         run: |
           git add daymark/data.json
           if ! git diff --cached --quiet; then

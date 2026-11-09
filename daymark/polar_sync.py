@@ -1,111 +1,93 @@
-"""Import selected Polar AccessLink v3 observations into Daymark.
-Requires POLAR_ACCESS_TOKEN and POLAR_USER_ID as GitHub Actions secrets.
-Only publishes exercise summaries and daily steps. No GPS, raw HR samples, or identity.
-"""
+"""Open Daymark Polar v4 importer. Secrets stay in GitHub Actions, not the public site."""
+import base64
 import datetime as dt
 import json
 import os
-import sys
-import urllib.error
+import urllib.parse
 import urllib.request
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
-BASE = "https://www.polaraccesslink.com/v3"
-DATA = Path(__file__).with_name("data.json")
+ROOT="https://www.polaraccesslink.com/v4/data"
+TOKEN="https://auth.polar.com/oauth/token"
+DATA=Path(__file__).with_name("data.json")
+REDIRECT="https://thejden.github.io/daymark/polar-callback.html"
 
-def get(path, token):
-    req = urllib.request.Request(BASE + path, headers={
-        "Authorization": "Bearer " + token, "Accept": "application/json"
-    })
-    try:
-        with urllib.request.urlopen(req, timeout=30) as response:
-            return json.load(response)
-    except urllib.error.HTTPError as exc:
-        if exc.code == 404:
-            return None
-        raise RuntimeError("Polar API returned HTTP " + str(exc.code)) from None
+def request(url, token=None, form=None, basic=None):
+    headers={"Accept":"application/json"}
+    data=None
+    if token: headers["Authorization"]="Bearer "+token
+    if basic:
+        headers["Authorization"]="Basic "+base64.b64encode(":".join(basic).encode()).decode()
+    if form is not None:
+        headers["Content-Type"]="application/x-www-form-urlencoded"
+        data=urllib.parse.urlencode(form).encode()
+    req=urllib.request.Request(url,data=data,headers=headers)
+    with urllib.request.urlopen(req,timeout=40) as r:return json.load(r)
 
-def metric(db, mid, label, group, components, kind="numeric"):
-    found = next((m for m in db["metrics"] if m["id"] == mid), None)
-    if found:
-        return found
-    found = dict(id=mid, label=label, group=group, kind=kind,
-                 components=components, source="Polar Flow (AccessLink)",
-                 classification="device-recorded", records=[])
-    db["metrics"].append(found)
-    return found
-
-def upsert(m, date, values, record_id=None):
-    if not date or not values:
-        return
-    records = m["records"]
-    for rec in records:
-        if rec.get("date") == date and rec.get("recordId") == record_id:
-            rec["values"] = values
-            return
-    rec = {"date": date, "values": values}
-    if record_id:
-        rec["recordId"] = record_id
-    records.append(rec)
+def upsert(db,id,label,components,day,values,record_id=None):
+    m=next((m for m in db["metrics"] if m["id"]==id),None)
+    if m is None:
+        m={"id":id,"label":label,"group":"Polar","kind":"numeric","components":components,
+           "source":"Polar Flow (AccessLink v4)","classification":"device-recorded","records":[]}
+        db["metrics"].append(m)
+    match=next((r for r in m["records"] if r["date"]==day and r.get("recordId")==record_id),None)
+    if match:match["values"]=values
+    else:
+        record={"date":day,"values":values}
+        if record_id:record["recordId"]=record_id
+        m["records"].append(record)
 
 def main():
-    local = dt.datetime.now(ZoneInfo("America/Los_Angeles"))
-    if os.getenv("GITHUB_EVENT_NAME") == "schedule" and local.hour != 23:
-        print("Not 11 PM Pacific; skipping DST alternate schedule")
+    now=dt.datetime.now(ZoneInfo("America/Los_Angeles"))
+    if os.getenv("GITHUB_EVENT_NAME")=="schedule" and now.hour!=23:
+        print("Outside 11 PM Pacific window")
         return
-    token = os.getenv("POLAR_ACCESS_TOKEN")
-    uid = os.getenv("POLAR_USER_ID")
-    if not token or not uid:
-        print("Polar credentials not configured; no data changed")
+    client=os.environ["POLAR_CLIENT_ID"]
+    secret=os.environ["POLAR_CLIENT_SECRET"]
+    refresh=os.getenv("POLAR_REFRESH_TOKEN")
+    auth_code=os.getenv("POLAR_AUTH_CODE")
+    if refresh:
+        form={"grant_type":"refresh_token","refresh_token":refresh}
+    elif auth_code:
+        form={"grant_type":"authorization_code","code":auth_code,"redirect_uri":REDIRECT}
+    else:
+        print("No authorization yet; set POLAR_AUTH_CODE as a GitHub secret and run workflow")
         return
-    db = json.loads(DATA.read_text())
-    steps = metric(db, "polar_steps", "Polar steps", "Activity",
-                   [{"key":"value","label":"Steps","unit":"steps","precision":0}])
-    workouts = metric(db, "polar_workout_duration", "Workout duration", "Exercise",
-                      [{"key":"value","label":"Duration","unit":"min","precision":1}])
-    hr = metric(db, "polar_workout_hr", "Workout heart rate", "Exercise",
-                [{"key":"average","label":"Average","unit":"bpm","precision":0},
-                 {"key":"maximum","label":"Maximum","unit":"bpm","precision":0}])
-    # Polar activity is keyed by date; request the past week to catch late uploads.
-    for days_ago in range(8):
-        day = (local.date()-dt.timedelta(days=days_ago)).isoformat()
-        a = get("/users/activities/" + day, token)
-        if isinstance(a, dict) and isinstance(a.get("active_steps"), (int,float)):
-            upsert(steps, day, {"value":a["active_steps"]})
-    # Exercise list contains sessions available to the authorized user.
-    items = get("/exercises?limit=100", token)
-    if isinstance(items, list):
-        for e in items:
-            if not isinstance(e, dict):
-                continue
-            stamp = e.get("start_time") or e.get("start_time_utc") or ""
-            date = stamp[:10]
-            eid = str(e.get("id") or e.get("exercise_id") or "")
-            if not date or not eid:
-                continue
-            duration = e.get("duration")
-            # Polar uses ISO 8601 durations (PT1H20M...). Parse conservatively.
-            if isinstance(duration,str) and duration.startswith("PT"):
-                import re
-                match = re.fullmatch(r"PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+(?:\.\d+)?)S)?",duration)
-                if match:
-                    h,m,s=match.groups()
-                    minutes=round(int(h or 0)*60+int(m or 0)+float(s or 0)/60,1)
-                    upsert(workouts,date,{"value":minutes},eid)
-            hrv=e.get("heart_rate") or {}
-            if isinstance(hrv,dict):
-                values={}
-                for source,target in [("average","average"),("maximum","maximum")]:
-                    if isinstance(hrv.get(source),(int,float)):
-                        values[target]=hrv[source]
-                if values:
-                    upsert(hr,date,values,eid)
-    for m in db["metrics"]:
-        m["records"].sort(key=lambda r:(r.get("date",""),r.get("recordId","")))
-    db["updatedOn"]=local.date().isoformat()
+    tokens=request(TOKEN,form=form,basic=(client,secret))
+    # Token refresh may rotate the refresh token. Update encrypted GitHub secret
+    # BEFORE publishing or making further API requests.
+    new_refresh=tokens.get("refresh_token")
+    if not new_refresh:raise RuntimeError("Polar did not return refresh token")
+    if not os.getenv("GH_TOKEN"):raise RuntimeError("DAYMARK_GH_TOKEN required to rotate refresh token")
+    import subprocess
+    subprocess.run(["gh","secret","set","POLAR_REFRESH_TOKEN","--repo",os.environ["GITHUB_REPOSITORY"],"--body",new_refresh],
+                   check=True,env={**os.environ,"GH_TOKEN":os.environ["GH_TOKEN"]},capture_output=True)
+    token=tokens["access_token"]
+    db=json.loads(DATA.read_text())
+    start=(now.date()-dt.timedelta(days=8)).isoformat()
+    end=(now.date()+dt.timedelta(days=1)).isoformat()
+    q=urllib.parse.urlencode({"from":start,"to":end})
+    sessions=request(ROOT+"/training-sessions/list?"+q,token)
+    for s in sessions.get("trainingSessions",[]):
+        date=str(s.get("startTime",""))[:10]
+        sid=(s.get("identifier") or {}).get("id")
+        if not date or not sid:continue
+        duration=s.get("durationMillis")
+        if isinstance(duration,(int,float)):
+            upsert(db,"polar_workout_duration","Polar workout duration",
+                   [{"key":"value","label":"Duration","unit":"min","precision":1}],date,
+                   {"value":round(duration/60000,1)},str(sid))
+        hrv={k:s[source] for source,k in [("hrAvg","average"),("hrMax","maximum")] if isinstance(s.get(source),(int,float))}
+        if hrv:
+            upsert(db,"polar_workout_hr","Polar workout heart rate",
+                   [{"key":"average","label":"Average","unit":"bpm","precision":0},
+                    {"key":"maximum","label":"Maximum","unit":"bpm","precision":0}],date,hrv,str(sid))
+    # Activity endpoint without features returns dates only. Don't invent step counts.
+    activity=request(ROOT+"/activity/list?"+q,token)
+    print("Polar activity days available:",len(activity.get("activities",{}).get("activityDays",[])))
+    for m in db["metrics"]:m["records"].sort(key=lambda r:(r["date"],r.get("recordId","")))
+    db["updatedOn"]=now.date().isoformat()
     DATA.write_text(json.dumps(db,indent=2,ensure_ascii=False)+"\n")
-    print("Polar sync completed; published only selected summaries")
-
-if __name__=="__main__":
-    main()
+    print("Imported",len(sessions.get("trainingSessions",[])),"training sessions")
+if __name__=="__main__":main()
