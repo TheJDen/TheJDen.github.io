@@ -78,9 +78,9 @@ def main():
                    check=True,env={**os.environ,"GH_TOKEN":os.environ["GH_TOKEN"]},capture_output=True)
     token=tokens["access_token"]
     db=json.loads(DATA.read_text())
-    # Polar v4 requires RFC3339 date-times for both query parameters.
-    # UTC timestamps cover the previous eight days through the present moment.
-    end=dt.datetime.now(dt.timezone.utc)
+    # Polar v4 live API expects local ISO date-times WITHOUT UTC offset or Z.
+    # Use a completed date window, preserving the last eight local days.
+    end=now.replace(tzinfo=None)
     start=end-dt.timedelta(days=8)
     q=urllib.parse.urlencode({"from":start.isoformat(timespec="seconds"),"to":end.isoformat(timespec="seconds")})
     sessions=request(ROOT+"/training-sessions/list?"+q,token)
