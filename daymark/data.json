@@ -1,6 +1,6 @@
 {
   "schema": "open-daymark/1",
-  "updatedOn": "2026-11-08",
+  "updatedOn": "2026-11-09",
   "timezone": "America/Los_Angeles",
   "policy": {
     "interpolation": "forbidden",
@@ -775,6 +775,363 @@
       "source": "Polar Flow / manually logged",
       "classification": "device-recorded",
       "records": []
+    },
+    {
+      "id": "polar_workout_duration",
+      "label": "Polar workout duration",
+      "group": "Polar",
+      "kind": "numeric",
+      "components": [
+        {
+          "key": "value",
+          "label": "Duration",
+          "unit": "min",
+          "precision": 1
+        }
+      ],
+      "source": "Polar Flow (AccessLink v4)",
+      "classification": "device-recorded",
+      "records": [
+        {
+          "date": "2026-11-01",
+          "values": {
+            "value": 31.6
+          },
+          "recordId": "0e2c2371-c090-1ac1-7ea1-3009e0f56e1f"
+        },
+        {
+          "date": "2026-11-01",
+          "values": {
+            "value": 80.9
+          },
+          "recordId": "0e2c2ab6-7090-059d-7494-6baca721e9c7"
+        },
+        {
+          "date": "2026-11-01",
+          "values": {
+            "value": 11.6
+          },
+          "recordId": "0e2c30b3-6090-2fab-df9f-f7803e76ba4c"
+        },
+        {
+          "date": "2026-11-01",
+          "values": {
+            "value": 18.6
+          },
+          "recordId": "0e2c3211-3090-29be-461c-7b3ba2c0f59e"
+        },
+        {
+          "date": "2026-11-01",
+          "values": {
+            "value": 13.6
+          },
+          "recordId": "0e2c3291-d090-11ef-3101-cf9dc1df3529"
+        },
+        {
+          "date": "2026-11-01",
+          "values": {
+            "value": 50.8
+          },
+          "recordId": "0e2c3401-9090-3064-622f-a84133a3c51f"
+        },
+        {
+          "date": "2026-11-01",
+          "values": {
+            "value": 27.6
+          },
+          "recordId": "0e2c35b7-b090-3583-5122-0761b7e95222"
+        },
+        {
+          "date": "2026-11-03",
+          "values": {
+            "value": 37.5
+          },
+          "recordId": "0e2c69ea-549e-b430-6739-08c191ea1a44"
+        },
+        {
+          "date": "2026-11-03",
+          "values": {
+            "value": 18.1
+          },
+          "recordId": "0e2c6c0d-c090-0a6f-9b5d-60cce5ccdadc"
+        },
+        {
+          "date": "2026-11-03",
+          "values": {
+            "value": 23.1
+          },
+          "recordId": "0e2c6d09-0090-0996-d7d9-770fd2f2fd6c"
+        },
+        {
+          "date": "2026-11-03",
+          "values": {
+            "value": 18.6
+          },
+          "recordId": "0e2c6dc8-0090-258f-af7d-e71ac87a20dc"
+        },
+        {
+          "date": "2026-11-03",
+          "values": {
+            "value": 11.6
+          },
+          "recordId": "0e2c6eeb-3090-010d-2bca-17cbdc61089a"
+        },
+        {
+          "date": "2026-11-03",
+          "values": {
+            "value": 31.6
+          },
+          "recordId": "0e2c72e6-0090-37a7-1d85-e8c8cc8a13ee"
+        },
+        {
+          "date": "2026-11-05",
+          "values": {
+            "value": 10.6
+          },
+          "recordId": "0e2cb5b7-4090-31e9-7506-d1c89ea89742"
+        },
+        {
+          "date": "2026-11-06",
+          "values": {
+            "value": 43.7
+          },
+          "recordId": "0e2ccf3e-f39b-20ad-64ee-11f98a50db38"
+        },
+        {
+          "date": "2026-11-06",
+          "values": {
+            "value": 59.8
+          },
+          "recordId": "0e2ccf55-2090-3921-abbb-eb6c0067e742"
+        },
+        {
+          "date": "2026-11-06",
+          "values": {
+            "value": 44.7
+          },
+          "recordId": "0e2cd12b-3090-1722-e9f1-0de46feee383"
+        },
+        {
+          "date": "2026-11-06",
+          "values": {
+            "value": 23.1
+          },
+          "recordId": "0e2cd516-3090-1ff1-fa5b-dd767d43403f"
+        },
+        {
+          "date": "2026-11-06",
+          "values": {
+            "value": 25.6
+          },
+          "recordId": "0e2cd5cf-2090-01b1-90aa-5548d11260ad"
+        },
+        {
+          "date": "2026-11-07",
+          "values": {
+            "value": 60.3
+          },
+          "recordId": "0e2cef77-9d9b-b8fe-c206-32989e8c97e6"
+        },
+        {
+          "date": "2026-11-07",
+          "values": {
+            "value": 61.8
+          },
+          "recordId": "0e2cef84-f090-39ce-f5af-4cb56e107836"
+        }
+      ]
+    },
+    {
+      "id": "polar_workout_hr",
+      "label": "Polar workout heart rate",
+      "group": "Polar",
+      "kind": "numeric",
+      "components": [
+        {
+          "key": "average",
+          "label": "Average",
+          "unit": "bpm",
+          "precision": 0
+        },
+        {
+          "key": "maximum",
+          "label": "Maximum",
+          "unit": "bpm",
+          "precision": 0
+        }
+      ],
+      "source": "Polar Flow (AccessLink v4)",
+      "classification": "device-recorded",
+      "records": [
+        {
+          "date": "2026-11-01",
+          "values": {
+            "average": 112,
+            "maximum": 136
+          },
+          "recordId": "0e2c2371-c090-1ac1-7ea1-3009e0f56e1f"
+        },
+        {
+          "date": "2026-11-01",
+          "values": {
+            "average": 117,
+            "maximum": 150
+          },
+          "recordId": "0e2c2ab6-7090-059d-7494-6baca721e9c7"
+        },
+        {
+          "date": "2026-11-01",
+          "values": {
+            "average": 119,
+            "maximum": 142
+          },
+          "recordId": "0e2c30b3-6090-2fab-df9f-f7803e76ba4c"
+        },
+        {
+          "date": "2026-11-01",
+          "values": {
+            "average": 156,
+            "maximum": 211
+          },
+          "recordId": "0e2c3211-3090-29be-461c-7b3ba2c0f59e"
+        },
+        {
+          "date": "2026-11-01",
+          "values": {
+            "average": 126,
+            "maximum": 150
+          },
+          "recordId": "0e2c3291-d090-11ef-3101-cf9dc1df3529"
+        },
+        {
+          "date": "2026-11-01",
+          "values": {
+            "average": 131,
+            "maximum": 179
+          },
+          "recordId": "0e2c3401-9090-3064-622f-a84133a3c51f"
+        },
+        {
+          "date": "2026-11-01",
+          "values": {
+            "average": 127,
+            "maximum": 156
+          },
+          "recordId": "0e2c35b7-b090-3583-5122-0761b7e95222"
+        },
+        {
+          "date": "2026-11-03",
+          "values": {
+            "average": 133,
+            "maximum": 158
+          },
+          "recordId": "0e2c69ea-549e-b430-6739-08c191ea1a44"
+        },
+        {
+          "date": "2026-11-03",
+          "values": {
+            "average": 132,
+            "maximum": 169
+          },
+          "recordId": "0e2c6c0d-c090-0a6f-9b5d-60cce5ccdadc"
+        },
+        {
+          "date": "2026-11-03",
+          "values": {
+            "average": 134,
+            "maximum": 159
+          },
+          "recordId": "0e2c6d09-0090-0996-d7d9-770fd2f2fd6c"
+        },
+        {
+          "date": "2026-11-03",
+          "values": {
+            "average": 101,
+            "maximum": 124
+          },
+          "recordId": "0e2c6dc8-0090-258f-af7d-e71ac87a20dc"
+        },
+        {
+          "date": "2026-11-03",
+          "values": {
+            "average": 121,
+            "maximum": 159
+          },
+          "recordId": "0e2c6eeb-3090-010d-2bca-17cbdc61089a"
+        },
+        {
+          "date": "2026-11-03",
+          "values": {
+            "average": 102,
+            "maximum": 124
+          },
+          "recordId": "0e2c72e6-0090-37a7-1d85-e8c8cc8a13ee"
+        },
+        {
+          "date": "2026-11-05",
+          "values": {
+            "average": 127,
+            "maximum": 143
+          },
+          "recordId": "0e2cb5b7-4090-31e9-7506-d1c89ea89742"
+        },
+        {
+          "date": "2026-11-06",
+          "values": {
+            "average": 146,
+            "maximum": 191
+          },
+          "recordId": "0e2ccf3e-f39b-20ad-64ee-11f98a50db38"
+        },
+        {
+          "date": "2026-11-06",
+          "values": {
+            "average": 131,
+            "maximum": 192
+          },
+          "recordId": "0e2ccf55-2090-3921-abbb-eb6c0067e742"
+        },
+        {
+          "date": "2026-11-06",
+          "values": {
+            "average": 140,
+            "maximum": 193
+          },
+          "recordId": "0e2cd12b-3090-1722-e9f1-0de46feee383"
+        },
+        {
+          "date": "2026-11-06",
+          "values": {
+            "average": 108,
+            "maximum": 139
+          },
+          "recordId": "0e2cd516-3090-1ff1-fa5b-dd767d43403f"
+        },
+        {
+          "date": "2026-11-06",
+          "values": {
+            "average": 120,
+            "maximum": 150
+          },
+          "recordId": "0e2cd5cf-2090-01b1-90aa-5548d11260ad"
+        },
+        {
+          "date": "2026-11-07",
+          "values": {
+            "average": 127,
+            "maximum": 148
+          },
+          "recordId": "0e2cef77-9d9b-b8fe-c206-32989e8c97e6"
+        },
+        {
+          "date": "2026-11-07",
+          "values": {
+            "average": 148,
+            "maximum": 187
+          },
+          "recordId": "0e2cef84-f090-39ce-f5af-4cb56e107836"
+        }
+      ]
     }
   ],
   "documents": [],
