@@ -1,0 +1,33 @@
+name: Polar nightly sync
+on:
+  schedule:
+    - cron: "0 6,7 * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: daymark-polar
+  cancel-in-progress: false
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Import Polar data
+        env:
+          POLAR_ACCESS_TOKEN: ${{ secrets.POLAR_ACCESS_TOKEN }}
+          POLAR_USER_ID: ${{ secrets.POLAR_USER_ID }}
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+        run: python daymark/polar_sync.py
+      - name: Commit changes if needed
+        run: |
+          git add daymark/data.json
+          if ! git diff --cached --quiet; then
+            git -c user.name="daymark-bot" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" commit -m "Sync Polar measurements"
+            git push
+          fi
