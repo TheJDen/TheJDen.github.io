@@ -81,7 +81,9 @@ def main():
     # Polar v4 live API expects local ISO date-times WITHOUT UTC offset or Z.
     # Use a completed date window, preserving the last eight local days.
     end=now.replace(tzinfo=None)
-    start=end-dt.timedelta(days=8)
+    # Manual runs backfill the API's 90-day training-summary window.
+    lookback=89 if os.getenv("GITHUB_EVENT_NAME")=="workflow_dispatch" else 8
+    start=end-dt.timedelta(days=lookback)
     q=urllib.parse.urlencode({"from":start.isoformat(timespec="seconds"),"to":end.isoformat(timespec="seconds")})
     sessions=request(ROOT+"/training-sessions/list?"+q,token)
     for s in sessions.get("trainingSessions",[]):
