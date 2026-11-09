@@ -151,7 +151,7 @@ def main():
     def duration_hours(value):
         if not isinstance(value,str):return None
         import re
-        match=re.fullmatch(r"(?:(\\d+)H)?(?:(\\d+)M)?(?:(\\d+(?:\\.\\d+)?)S)?",value.removeprefix("PT").removesuffix("s"))
+        match=re.fullmatch(r"(?:(\d+)H)?(?:(\d+)M)?(?:(\d+(?:\.\d+)?)S)?",value.removeprefix("PT").removesuffix("s"))
         if not match:return None
         h,m,sec=match.groups()
         return round(int(h or 0)+int(m or 0)/60+float(sec or 0)/3600,2)
