@@ -27,8 +27,16 @@ def request(url, token=None, form=None, basic=None):
     try:
         with urllib.request.urlopen(req,timeout=40) as r:return json.load(r)
     except urllib.error.HTTPError as e:
-        # Do not print the request URL, token, or response body to public Actions logs.
-        raise RuntimeError(f"Polar API rejected request (HTTP {e.code}); endpoint: {urllib.parse.urlsplit(url).path}") from None
+        # Show only allowlisted error fields, never token, URL parameters, or raw data.
+        detail=""
+        if e.code == 400:
+            try:
+                body=json.loads(e.read(4096).decode("utf-8"))
+                if isinstance(body,dict):
+                    detail="; "+str({k:body[k] for k in ("error","error_description","code","message") if k in body})[:350]
+            except (ValueError,UnicodeError):
+                pass
+        raise RuntimeError(f"Polar API rejected request (HTTP {e.code}); endpoint: {urllib.parse.urlsplit(url).path}{detail}") from None
 
 def upsert(db,id,label,components,day,values,record_id=None):
     m=next((m for m in db["metrics"] if m["id"]==id),None)
