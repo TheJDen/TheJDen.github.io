@@ -4,6 +4,7 @@ import datetime as dt
 import json
 import os
 import urllib.parse
+import urllib.error
 import urllib.request
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -23,7 +24,11 @@ def request(url, token=None, form=None, basic=None):
         headers["Content-Type"]="application/x-www-form-urlencoded"
         data=urllib.parse.urlencode(form).encode()
     req=urllib.request.Request(url,data=data,headers=headers)
-    with urllib.request.urlopen(req,timeout=40) as r:return json.load(r)
+    try:
+        with urllib.request.urlopen(req,timeout=40) as r:return json.load(r)
+    except urllib.error.HTTPError as e:
+        # Do not print the request URL, token, or response body to public Actions logs.
+        raise RuntimeError(f"Polar API rejected request (HTTP {e.code}); endpoint: {urllib.parse.urlsplit(url).path}") from None
 
 def upsert(db,id,label,components,day,values,record_id=None):
     m=next((m for m in db["metrics"] if m["id"]==id),None)
@@ -66,7 +71,9 @@ def main():
     token=tokens["access_token"]
     db=json.loads(DATA.read_text())
     start=(now.date()-dt.timedelta(days=8)).isoformat()
-    end=(now.date()+dt.timedelta(days=1)).isoformat()
+    # Polar can reject future end dates. Use today as the exclusive end;
+    # the previous day is collected on the next nightly run.
+    end=now.date().isoformat()
     q=urllib.parse.urlencode({"from":start,"to":end})
     sessions=request(ROOT+"/training-sessions/list?"+q,token)
     for s in sessions.get("trainingSessions",[]):
@@ -84,8 +91,12 @@ def main():
                    [{"key":"average","label":"Average","unit":"bpm","precision":0},
                     {"key":"maximum","label":"Maximum","unit":"bpm","precision":0}],date,hrv,str(sid))
     # Activity endpoint without features returns dates only. Don't invent step counts.
-    activity=request(ROOT+"/activity/list?"+q,token)
-    print("Polar activity days available:",len(activity.get("activities",{}).get("activityDays",[])))
+    # Activity is optional: a failure here should not prevent workout import.
+    try:
+        activity=request(ROOT+"/activity/list?"+q,token)
+        print("Polar activity response received:",isinstance(activity,dict))
+    except RuntimeError as e:
+        print("Polar activity unavailable:",e)
     for m in db["metrics"]:m["records"].sort(key=lambda r:(r["date"],r.get("recordId","")))
     db["updatedOn"]=now.date().isoformat()
     DATA.write_text(json.dumps(db,indent=2,ensure_ascii=False)+"\n")
