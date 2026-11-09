@@ -78,11 +78,11 @@ def main():
                    check=True,env={**os.environ,"GH_TOKEN":os.environ["GH_TOKEN"]},capture_output=True)
     token=tokens["access_token"]
     db=json.loads(DATA.read_text())
-    start=(now.date()-dt.timedelta(days=8)).isoformat()
-    # Polar can reject future end dates. Use today as the exclusive end;
-    # the previous day is collected on the next nightly run.
-    end=now.date().isoformat()
-    q=urllib.parse.urlencode({"from":start,"to":end})
+    # Polar v4 requires RFC3339 date-times for both query parameters.
+    # UTC timestamps cover the previous eight days through the present moment.
+    end=dt.datetime.now(dt.timezone.utc)
+    start=end-dt.timedelta(days=8)
+    q=urllib.parse.urlencode({"from":start.isoformat(timespec="seconds"),"to":end.isoformat(timespec="seconds")})
     sessions=request(ROOT+"/training-sessions/list?"+q,token)
     for s in sessions.get("trainingSessions",[]):
         date=str(s.get("startTime",""))[:10]
