@@ -105,6 +105,104 @@ def main():
         print("Polar activity response received:",isinstance(activity,dict))
     except RuntimeError as e:
         print("Polar activity unavailable:",e)
+
+    # Additional workout summary measurements. Keep GPS, names, notes, and raw
+    # biometric samples private; the public dataset contains only selected values.
+    for session in sessions.get("trainingSessions",[]):
+        date=str(session.get("startTime",""))[:10]
+        sid=(session.get("identifier") or {}).get("id")
+        if not date or not sid:continue
+        def workout(mid,label,source,unit,precision=1,scale=1):
+            value=session.get(source)
+            if isinstance(value,(int,float)) and not isinstance(value,bool):
+                upsert(db,mid,label,[{"key":"value","label":label,"unit":unit,"precision":precision}],
+                       date,{"value":round(value*scale,precision)},str(sid))
+        workout("polar_workout_distance","Polar workout distance","distanceMeters","km",2,.001)
+        workout("polar_workout_calories","Polar workout energy","calories","kcal",0)
+        workout("polar_training_load","Polar training load","trainingLoad","",1)
+        workout("polar_recovery_time","Polar recovery time","recoveryTimeMillis","h",1,1/3600000)
+        # Session type is a categorical observation, not a generated score.
+        name=session.get("sport") or session.get("sportName")
+        if isinstance(name,str) and name.strip():
+            upsert(db,"polar_workout_sport","Polar workout sport",
+                   [{"key":"value","label":"Sport","unit":"","precision":0}],
+                   date,{"value":name},str(sid))
+            next(m for m in db["metrics"] if m["id"]=="polar_workout_sport")["kind"]="categorical"
+
+    # The following endpoints are available under the four scopes originally
+    # granted by the user. An empty response means no observation, not zero.
+    def optional(path):
+        try:
+            return request(ROOT+path,token)
+        except RuntimeError as exc:
+            print("Optional Polar dataset unavailable:",str(exc)[:220])
+            return {}
+    def number(value):
+        try:
+            if isinstance(value,bool) or value is None:return None
+            v=float(value)
+            return v if v==v and abs(v)<1e12 else None
+        except (ValueError,TypeError):return None
+    def scalar(mid,label,day,value,unit,precision=1,record_id=None,scale=1):
+        v=number(value)
+        if v is None:return
+        upsert(db,mid,label,[{"key":"value","label":label,"unit":unit,"precision":precision}],
+               day,{"value":round(v*scale,precision)},record_id)
+    def duration_hours(value):
+        if not isinstance(value,str):return None
+        import re
+        match=re.fullmatch(r"(?:(\\d+)H)?(?:(\\d+)M)?(?:(\\d+(?:\\.\\d+)?)S)?",value.removeprefix("PT").removesuffix("s"))
+        if not match:return None
+        h,m,sec=match.groups()
+        return round(int(h or 0)+int(m or 0)/60+float(sec or 0)/3600,2)
+
+    # Detailed activity, sleep and recovery features require one-day windows.
+    for offset in range(8):
+        day=now.date()-dt.timedelta(days=offset)
+        tomorrow=day+dt.timedelta(days=1)
+        qday=urllib.parse.urlencode({"from":day.isoformat()+"T00:00:00",
+                                    "to":tomorrow.isoformat()+"T00:00:00"})
+        # Daily activity samples: derive steps only when a single device's
+        # step samples are present. Multiple devices must not be added together.
+        act=optional("/activity/list?"+qday+"&features=samples")
+        for a in (act.get("activities") or {}).get("activityDays",[]):
+            date=a.get("date")
+            if not date:continue
+            devices=a.get("activitiesPerDevice") or []
+            if len(devices)!=1:continue
+            totals=[]
+            for sample in devices[0].get("activitySamples") or []:
+                steps=(sample.get("stepSamples") or {}).get("steps") or []
+                if steps and all(isinstance(x,(int,float)) and x>=0 for x in steps):
+                    totals.append(sum(steps))
+            if totals:
+                scalar("polar_steps","Polar daily steps",date,sum(totals),"steps",0)
+        sleep=optional("/sleeps?"+qday+"&features=sleep-evaluation,sleep-score")
+        for night in sleep.get("nightSleeps",[]):
+            date=night.get("sleepDate")
+            if not date:continue
+            evaluation=night.get("sleepEvaluation") or {}
+            hours=duration_hours(evaluation.get("asleepDuration"))
+            if hours is not None:scalar("polar_sleep_duration","Polar sleep duration",date,hours,"h",2)
+            score=night.get("sleepScore") or {}
+            scalar("polar_sleep_score","Polar sleep score",date,score.get("sleepScore"),"points",0)
+            phases=evaluation.get("phaseDurations") or {}
+            for field,label in (("rem","REM"),("light","Light"),("deep","Deep"),("wake","Awake")):
+                h=duration_hours(phases.get(field))
+                if h is not None:scalar("polar_sleep_"+field,"Polar "+label+" sleep",date,h,"h",2)
+            analysis=evaluation.get("analysis") or {}
+            scalar("polar_sleep_efficiency","Polar sleep efficiency",date,analysis.get("efficiencyPercent"),"%",1)
+        recharge=optional("/nightly-recharge-results?"+qday)
+        for night in (recharge.get("nightlyRechargeResults") or {}).get("nightlyRechargeResults",[]):
+            date=night.get("sleepResultDate")
+            if not date:continue
+            for field,mid,label,unit,precision in (
+                ("meanNightlyRecoveryRmssd","polar_nightly_hrv","Polar nightly HRV (RMSSD)","ms",1),
+                ("meanNightlyRecoveryRri","polar_nightly_rri","Polar nightly R-R interval","ms",1),
+                ("ansStatus","polar_ans_status","Polar ANS status","",2),
+                ("recoveryIndicator","polar_recovery_indicator","Polar recovery indicator","",0)):
+                scalar(mid,label,date,night.get(field),unit,precision)
+
     for m in db["metrics"]:m["records"].sort(key=lambda r:(r["date"],r.get("recordId","")))
     db["updatedOn"]=now.date().isoformat()
     DATA.write_text(json.dumps(db,indent=2,ensure_ascii=False)+"\n")
