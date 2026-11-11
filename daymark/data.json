@@ -873,7 +873,7 @@
         {
           "date": "2026-10-29",
           "values": {
-            "value": 10
+            "value": 10.0
           },
           "recordId": "0e2bb4b5-8090-1dc2-f5a9-93dd3437f0c9"
         },
@@ -1107,8 +1107,86 @@
             "value": 61.8
           },
           "recordId": "0e2cef84-f090-39ce-f5af-4cb56e107836"
+        },
+        {
+          "date": "2026-11-07",
+          "values": {
+            "value": 13.6
+          },
+          "recordId": "0e2cf1c9-a090-31e5-8f41-35fb72654348"
+        },
+        {
+          "date": "2026-11-07",
+          "values": {
+            "value": 32.1
+          },
+          "recordId": "0e2cf274-9090-09fa-be3c-82f508b5db4d"
+        },
+        {
+          "date": "2026-11-07",
+          "values": {
+            "value": 14.1
+          },
+          "recordId": "0e2cf3b4-3090-1742-e55a-6a359ede9354"
+        },
+        {
+          "date": "2026-11-07",
+          "values": {
+            "value": 20.6
+          },
+          "recordId": "0e2cf501-a090-278f-1f0d-09c4d5a4b4eb"
+        },
+        {
+          "date": "2026-11-08",
+          "values": {
+            "value": 10.1
+          },
+          "recordId": "0e2d00dc-9090-20ee-1a65-797976953b45"
+        },
+        {
+          "date": "2026-11-08",
+          "values": {
+            "value": 11.6
+          },
+          "recordId": "0e2d0bb8-2090-33e2-328f-3b64ce58b669"
+        },
+        {
+          "date": "2026-11-09",
+          "values": {
+            "value": 41.0
+          },
+          "recordId": "0e2d2e71-779e-6488-0a69-165a2c5cf542"
+        },
+        {
+          "date": "2026-11-09",
+          "values": {
+            "value": 25.1
+          },
+          "recordId": "0e2d300c-e090-15f1-fe45-f6fad0607104"
+        },
+        {
+          "date": "2026-11-10",
+          "values": {
+            "value": 19.1
+          },
+          "recordId": "0e2d5007-5090-3937-d8fb-4309abb3b8ba"
+        },
+        {
+          "date": "2026-11-10",
+          "values": {
+            "value": 20.6
+          },
+          "recordId": "0e2d506d-f090-26c2-8fff-b7201e1b5559"
+        },
+        {
+          "date": "2026-11-10",
+          "values": {
+            "value": 5.7
+          },
+          "recordId": "0e2d51a4-e39b-8335-093f-023706356b7c"
         }
-      ]
+      ],
+      "lastSyncedOn": "2026-11-10"
     },
     {
       "id": "polar_workout_hr",
@@ -1427,8 +1505,97 @@
             "maximum": 187
           },
           "recordId": "0e2cef84-f090-39ce-f5af-4cb56e107836"
+        },
+        {
+          "date": "2026-11-07",
+          "values": {
+            "average": 107,
+            "maximum": 141
+          },
+          "recordId": "0e2cf1c9-a090-31e5-8f41-35fb72654348"
+        },
+        {
+          "date": "2026-11-07",
+          "values": {
+            "average": 111,
+            "maximum": 135
+          },
+          "recordId": "0e2cf274-9090-09fa-be3c-82f508b5db4d"
+        },
+        {
+          "date": "2026-11-07",
+          "values": {
+            "average": 116,
+            "maximum": 133
+          },
+          "recordId": "0e2cf3b4-3090-1742-e55a-6a359ede9354"
+        },
+        {
+          "date": "2026-11-07",
+          "values": {
+            "average": 105,
+            "maximum": 135
+          },
+          "recordId": "0e2cf501-a090-278f-1f0d-09c4d5a4b4eb"
+        },
+        {
+          "date": "2026-11-08",
+          "values": {
+            "average": 103,
+            "maximum": 119
+          },
+          "recordId": "0e2d00dc-9090-20ee-1a65-797976953b45"
+        },
+        {
+          "date": "2026-11-08",
+          "values": {
+            "average": 121,
+            "maximum": 162
+          },
+          "recordId": "0e2d0bb8-2090-33e2-328f-3b64ce58b669"
+        },
+        {
+          "date": "2026-11-09",
+          "values": {
+            "average": 135,
+            "maximum": 166
+          },
+          "recordId": "0e2d2e71-779e-6488-0a69-165a2c5cf542"
+        },
+        {
+          "date": "2026-11-09",
+          "values": {
+            "average": 121,
+            "maximum": 149
+          },
+          "recordId": "0e2d300c-e090-15f1-fe45-f6fad0607104"
+        },
+        {
+          "date": "2026-11-10",
+          "values": {
+            "average": 108,
+            "maximum": 131
+          },
+          "recordId": "0e2d5007-5090-3937-d8fb-4309abb3b8ba"
+        },
+        {
+          "date": "2026-11-10",
+          "values": {
+            "average": 110,
+            "maximum": 133
+          },
+          "recordId": "0e2d506d-f090-26c2-8fff-b7201e1b5559"
+        },
+        {
+          "date": "2026-11-10",
+          "values": {
+            "average": 122,
+            "maximum": 133
+          },
+          "recordId": "0e2d51a4-e39b-8335-093f-023706356b7c"
         }
-      ]
+      ],
+      "lastSyncedOn": "2026-11-10"
     },
     {
       "id": "polar_workout_calories",
@@ -1704,8 +1871,86 @@
             "value": 624
           },
           "recordId": "0e2cef84-f090-39ce-f5af-4cb56e107836"
+        },
+        {
+          "date": "2026-11-07",
+          "values": {
+            "value": 84
+          },
+          "recordId": "0e2cf1c9-a090-31e5-8f41-35fb72654348"
+        },
+        {
+          "date": "2026-11-07",
+          "values": {
+            "value": 208
+          },
+          "recordId": "0e2cf274-9090-09fa-be3c-82f508b5db4d"
+        },
+        {
+          "date": "2026-11-07",
+          "values": {
+            "value": 99
+          },
+          "recordId": "0e2cf3b4-3090-1742-e55a-6a359ede9354"
+        },
+        {
+          "date": "2026-11-07",
+          "values": {
+            "value": 131
+          },
+          "recordId": "0e2cf501-a090-278f-1f0d-09c4d5a4b4eb"
+        },
+        {
+          "date": "2026-11-08",
+          "values": {
+            "value": 59
+          },
+          "recordId": "0e2d00dc-9090-20ee-1a65-797976953b45"
+        },
+        {
+          "date": "2026-11-08",
+          "values": {
+            "value": 86
+          },
+          "recordId": "0e2d0bb8-2090-33e2-328f-3b64ce58b669"
+        },
+        {
+          "date": "2026-11-09",
+          "values": {
+            "value": 354
+          },
+          "recordId": "0e2d2e71-779e-6488-0a69-165a2c5cf542"
+        },
+        {
+          "date": "2026-11-09",
+          "values": {
+            "value": 194
+          },
+          "recordId": "0e2d300c-e090-15f1-fe45-f6fad0607104"
+        },
+        {
+          "date": "2026-11-10",
+          "values": {
+            "value": 117
+          },
+          "recordId": "0e2d5007-5090-3937-d8fb-4309abb3b8ba"
+        },
+        {
+          "date": "2026-11-10",
+          "values": {
+            "value": 132
+          },
+          "recordId": "0e2d506d-f090-26c2-8fff-b7201e1b5559"
+        },
+        {
+          "date": "2026-11-10",
+          "values": {
+            "value": 41
+          },
+          "recordId": "0e2d51a4-e39b-8335-093f-023706356b7c"
         }
-      ]
+      ],
+      "lastSyncedOn": "2026-11-10"
     },
     {
       "id": "polar_workout_distance",
@@ -1726,18 +1971,359 @@
         {
           "date": "2026-10-29",
           "values": {
-            "value": 0
+            "value": 0.0
           },
           "recordId": "0e2bb3bd-b39a-7fce-7ecb-5e6f31387b28"
         },
         {
           "date": "2026-11-06",
           "values": {
-            "value": 0
+            "value": 0.0
           },
           "recordId": "0e2ccf3e-f39b-20ad-64ee-11f98a50db38"
         }
-      ]
+      ],
+      "lastSyncedOn": "2026-11-10"
+    },
+    {
+      "id": "polar_nightly_hrv",
+      "label": "Polar nightly HRV (RMSSD)",
+      "group": "Polar",
+      "kind": "numeric",
+      "components": [
+        {
+          "key": "value",
+          "label": "Polar nightly HRV (RMSSD)",
+          "unit": "ms",
+          "precision": 1
+        }
+      ],
+      "source": "Polar Flow (AccessLink v4)",
+      "classification": "device-recorded",
+      "records": [
+        {
+          "date": "2026-10-30",
+          "values": {
+            "value": 69.0
+          }
+        },
+        {
+          "date": "2026-10-31",
+          "values": {
+            "value": 61.0
+          }
+        },
+        {
+          "date": "2026-11-02",
+          "values": {
+            "value": 104.0
+          }
+        },
+        {
+          "date": "2026-11-03",
+          "values": {
+            "value": 106.0
+          }
+        },
+        {
+          "date": "2026-11-04",
+          "values": {
+            "value": 58.0
+          }
+        },
+        {
+          "date": "2026-11-05",
+          "values": {
+            "value": 45.0
+          }
+        },
+        {
+          "date": "2026-11-06",
+          "values": {
+            "value": 79.0
+          }
+        },
+        {
+          "date": "2026-11-07",
+          "values": {
+            "value": 69.0
+          }
+        },
+        {
+          "date": "2026-11-08",
+          "values": {
+            "value": 83.0
+          }
+        },
+        {
+          "date": "2026-11-09",
+          "values": {
+            "value": 97.0
+          }
+        },
+        {
+          "date": "2026-11-10",
+          "values": {
+            "value": 94.0
+          }
+        }
+      ],
+      "lastSyncedOn": "2026-11-10"
+    },
+    {
+      "id": "polar_nightly_rri",
+      "label": "Polar nightly R-R interval",
+      "group": "Polar",
+      "kind": "numeric",
+      "components": [
+        {
+          "key": "value",
+          "label": "Polar nightly R-R interval",
+          "unit": "ms",
+          "precision": 1
+        }
+      ],
+      "source": "Polar Flow (AccessLink v4)",
+      "classification": "device-recorded",
+      "records": [
+        {
+          "date": "2026-10-30",
+          "values": {
+            "value": 1124.0
+          }
+        },
+        {
+          "date": "2026-10-31",
+          "values": {
+            "value": 1013.0
+          }
+        },
+        {
+          "date": "2026-11-02",
+          "values": {
+            "value": 1256.0
+          }
+        },
+        {
+          "date": "2026-11-03",
+          "values": {
+            "value": 1209.0
+          }
+        },
+        {
+          "date": "2026-11-04",
+          "values": {
+            "value": 969.0
+          }
+        },
+        {
+          "date": "2026-11-05",
+          "values": {
+            "value": 850.0
+          }
+        },
+        {
+          "date": "2026-11-06",
+          "values": {
+            "value": 1139.0
+          }
+        },
+        {
+          "date": "2026-11-07",
+          "values": {
+            "value": 1091.0
+          }
+        },
+        {
+          "date": "2026-11-08",
+          "values": {
+            "value": 1153.0
+          }
+        },
+        {
+          "date": "2026-11-09",
+          "values": {
+            "value": 1251.0
+          }
+        },
+        {
+          "date": "2026-11-10",
+          "values": {
+            "value": 1242.0
+          }
+        }
+      ],
+      "lastSyncedOn": "2026-11-10"
+    },
+    {
+      "id": "polar_ans_status",
+      "label": "Polar ANS status",
+      "group": "Polar",
+      "kind": "numeric",
+      "components": [
+        {
+          "key": "value",
+          "label": "Polar ANS status",
+          "unit": "",
+          "precision": 2
+        }
+      ],
+      "source": "Polar Flow (AccessLink v4)",
+      "classification": "device-recorded",
+      "records": [
+        {
+          "date": "2026-10-30",
+          "values": {
+            "value": 0.0
+          }
+        },
+        {
+          "date": "2026-10-31",
+          "values": {
+            "value": 0.0
+          }
+        },
+        {
+          "date": "2026-11-02",
+          "values": {
+            "value": 10.0
+          }
+        },
+        {
+          "date": "2026-11-03",
+          "values": {
+            "value": 4.16
+          }
+        },
+        {
+          "date": "2026-11-04",
+          "values": {
+            "value": -10.0
+          }
+        },
+        {
+          "date": "2026-11-05",
+          "values": {
+            "value": -10.0
+          }
+        },
+        {
+          "date": "2026-11-06",
+          "values": {
+            "value": 0.84
+          }
+        },
+        {
+          "date": "2026-11-07",
+          "values": {
+            "value": -2.04
+          }
+        },
+        {
+          "date": "2026-11-08",
+          "values": {
+            "value": 2.26
+          }
+        },
+        {
+          "date": "2026-11-09",
+          "values": {
+            "value": 6.7
+          }
+        },
+        {
+          "date": "2026-11-10",
+          "values": {
+            "value": 5.08
+          }
+        }
+      ],
+      "lastSyncedOn": "2026-11-10"
+    },
+    {
+      "id": "polar_recovery_indicator",
+      "label": "Polar recovery indicator",
+      "group": "Polar",
+      "kind": "numeric",
+      "components": [
+        {
+          "key": "value",
+          "label": "Polar recovery indicator",
+          "unit": "",
+          "precision": 0
+        }
+      ],
+      "source": "Polar Flow (AccessLink v4)",
+      "classification": "device-recorded",
+      "records": [
+        {
+          "date": "2026-10-30",
+          "values": {
+            "value": 0.0
+          }
+        },
+        {
+          "date": "2026-10-31",
+          "values": {
+            "value": 0.0
+          }
+        },
+        {
+          "date": "2026-11-02",
+          "values": {
+            "value": 6.0
+          }
+        },
+        {
+          "date": "2026-11-03",
+          "values": {
+            "value": 5.0
+          }
+        },
+        {
+          "date": "2026-11-04",
+          "values": {
+            "value": 2.0
+          }
+        },
+        {
+          "date": "2026-11-05",
+          "values": {
+            "value": 2.0
+          }
+        },
+        {
+          "date": "2026-11-06",
+          "values": {
+            "value": 4.0
+          }
+        },
+        {
+          "date": "2026-11-07",
+          "values": {
+            "value": 4.0
+          }
+        },
+        {
+          "date": "2026-11-08",
+          "values": {
+            "value": 5.0
+          }
+        },
+        {
+          "date": "2026-11-09",
+          "values": {
+            "value": 5.0
+          }
+        },
+        {
+          "date": "2026-11-10",
+          "values": {
+            "value": 6.0
+          }
+        }
+      ],
+      "lastSyncedOn": "2026-11-10"
     }
   ],
   "documents": [],
