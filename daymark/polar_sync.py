@@ -53,9 +53,8 @@ def upsert(db,id,label,components,day,values,record_id=None):
 
 def main():
     now=dt.datetime.now(ZoneInfo("America/Los_Angeles"))
-    if os.getenv("GITHUB_EVENT_NAME")=="schedule" and now.hour!=23:
-        print("Outside 11 PM Pacific window")
-        return
+    # Run even if GitHub starts its scheduled job late.
+    # All observations are upserted by date and provider ID.
     client=os.environ["POLAR_CLIENT_ID"]
     secret=os.environ["POLAR_CLIENT_SECRET"]
     refresh=os.getenv("POLAR_REFRESH_TOKEN")
