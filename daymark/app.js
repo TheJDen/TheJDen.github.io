@@ -34,7 +34,7 @@ function showCards(){
   card.type="button";
   textNode(card,"span",m.label,"small-label");
   textNode(card,"strong",record?unit(c,record.values[c.key]):"—","big-number");
-  textNode(card,"span",record?shortDate(dateMs(record.date)):"—","card-date");
+  textNode(card,"span",record?shortDate(dateMs(record.date))+(record.status==="partial"?" *":""):"—","card-date");
   card.title=[m.label,record?"Recorded "+dateText(record.date):"No observations",record?.status==="partial"?"Partial-day reading":null,m.lastSyncedOn?"Imported "+dateText(m.lastSyncedOn):null,m.source].filter(Boolean).join(" · ");
   card.addEventListener("click",()=>choose(m.id));
   cards.append(card);
