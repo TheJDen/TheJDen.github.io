@@ -2,87 +2,80 @@
 <html lang="en">
 <head>
  <meta charset="utf-8">
- <meta name="viewport" content="width=device-width, initial-scale=1">
+ <meta name="viewport" content="width=device-width,initial-scale=1">
  <meta name="theme-color" content="#f6f8f5">
- <meta name="description" content="Open Daymark is a public, provenance-first journal of measured activity, training and recovery.">
- <title>Open Daymark · A public measurement journal</title>
+ <meta name="description" content="Open Daymark — personal metrics over time.">
+ <title>Open Daymark</title>
  <link rel="stylesheet" href="./ui.css">
  <script src="./app.js" defer></script>
 </head>
 <body>
  <header class="site-header">
   <a class="brand" href="./">Open Daymark <span class="brand-mark" aria-hidden="true">✳</span></a>
-  <nav class="topnav" aria-label="Main navigation">
-   <a href="#explore">Explore data</a>
-   <a href="#about">How to read</a>
-   <a href="./data.json">Source JSON</a>
+  <nav class="topnav" aria-label="Navigation">
+   <a href="#explore">Metrics</a>
+   <a href="#about">About</a>
   </nav>
  </header>
  <main>
-  <section class="hero" aria-labelledby="hero-title">
-   <p class="eyebrow">A public personal data journal</p>
-   <h1 id="hero-title">A record of change, without filling in the gaps.</h1>
-   <p class="lede">I'm using training, nutrition and recovery as a long-running experiment: when I change what I do, which measurable outcomes actually move? Daymark makes the record public—original measurements, labeled device estimates, and missing dates left honestly blank.</p>
-   <div id="update" class="update" aria-live="polite"></div>
-  </section>
+  <header class="hero">
+   <h1>Personal metrics</h1>
+   <p class="lede">Weight, activity, training and recovery.</p>
+   <div id="update" class="update" aria-label="Dataset update date"></div>
+  </header>
   <section aria-labelledby="overview-title">
-   <div class="section-title"><h2 id="overview-title">Latest measurements</h2><p>Select a card to explore its history</p></div>
+   <div class="section-title"><h2 id="overview-title">Overview</h2></div>
    <div id="cards" class="cards"></div>
   </section>
   <section class="explorer" id="explore" aria-labelledby="explore-title">
-   <div class="section-title"><h2 id="explore-title">Explore the data</h2><p>Choose a metric, compare dates, inspect individual entries</p></div>
+   <div class="section-title"><h2 id="explore-title">History</h2></div>
    <div class="explore-layout">
-    <aside id="groups" class="sidebar" aria-label="Available metrics"></aside>
+    <aside id="groups" class="sidebar" aria-label="Metrics"></aside>
     <div class="workspace">
      <div class="panel">
       <div class="plot-heading">
        <div>
-        <div id="source-label" class="source-label"></div>
         <h3 id="plot-title"></h3>
-        <p id="plot-desc"></p>
+        <div id="summary" class="metric-facts"></div>
        </div>
        <div class="plot-controls">
         <div id="component-controls"></div>
-        <label for="range" class="sr-only" style="position:absolute;clip-path:inset(50%);width:1px;height:1px;overflow:hidden">Date range</label>
-        <select id="range" aria-label="Chart date range">
-         <option value="7">Past 7 days</option>
-         <option value="30">Past 30 days</option>
-         <option value="90" selected>Past 90 days</option>
+        <label for="range" class="sr-only">Range</label>
+        <select id="range">
+         <option value="7">7 days</option>
+         <option value="30">30 days</option>
+         <option value="90" selected>90 days</option>
          <option value="all">All time</option>
         </select>
        </div>
       </div>
-      <div id="summary" class="metric-facts"></div>
       <div id="plot-options" class="plot-options"></div>
       <div id="chart" class="chartbox" aria-live="polite"></div>
       <div id="legend" class="legend"></div>
-      <p id="note" class="note"></p>
+      <details class="chart-details" id="chart-details">
+       <summary>Details</summary>
+       <div class="chart-details-body">
+        <p id="plot-desc"></p>
+        <p id="source-label" class="source-label"></p>
+        <p id="note" class="note"></p>
+       </div>
+      </details>
      </div>
      <div class="panel">
-      <div class="table-head"><h3>Recorded entries</h3><p>Actual source records, newest first</p></div>
+      <div class="table-head"><h3>Entries</h3></div>
       <div class="tablewrap"><table><thead id="head"></thead><tbody id="rows"></tbody></table></div>
      </div>
     </div>
    </div>
   </section>
-  <section class="about" id="about" aria-labelledby="about-title">
-   <h2 id="about-title">How to read Daymark</h2>
-   <p>Transparency is more useful than a perfect-looking graph. These charts visualize the stored measurements; they do not manufacture data for missing dates.</p>
-   <div class="methods">
-    <div class="method"><strong>Source, not guesswork</strong><p>Each metric identifies its origin. Direct measurements, device-recorded readings and device estimates are explicitly distinguished.</p></div>
-    <div class="method"><strong>Derived views are labeled</strong><p>Daily workout totals and observed rolling averages are calculated on screen for readability. The underlying dataset retains individual observations.</p></div>
-    <div class="method"><strong>Gaps and freshness stay visible</strong><p>Missing days aren't zeros. Partially recorded days are labeled. The last imported date helps show when a source may be stale.</p></div>
-   </div>
+  <section class="about" id="about">
+   <details class="about-details">
+    <summary>About Daymark</summary>
+    <p>Public personal measurements, device estimates and workout records. Missing days are left blank; summary views are computed from recorded data.</p>
+    <p>Details about sources, methods, and dates are available with each chart. <a href="./data.json">View the data</a> or <a href="https://github.com/TheJDen/TheJDen.github.io/tree/main/daymark">source code</a>.</p>
+   </details>
   </section>
-  <section class="roadmap" aria-labelledby="roadmap-title">
-   <h2 id="roadmap-title">What I'm building toward</h2>
-   <p>The idea is to link behaviors with outcomes while keeping observation, estimation and interpretation separate. These are planned areas, not claims about the current data.</p>
-   <div class="roadmap-grid">
-    <div class="roadmap-card"><h3>Food, as a measurable input</h3><p>Meal templates and recipe versions, estimated calories and nutrients, ingredient quality and source provenance—so dietary changes can be compared over time without claiming exact intake from guesses.</p></div>
-    <div class="roadmap-card"><h3>Training, as a long-term experiment</h3><p>Workouts organized by modality, duration and intensity, plus recovery and performance markers. Sessions first, then clearly defined aggregates and progress comparisons.</p></div>
-   </div>
-  </section>
-  <footer><span>Open Daymark · Observations, not a diagnosis or a health grade.</span><span><a href="./data.json">View the underlying JSON</a> · <a href="https://github.com/TheJDen/TheJDen.github.io/tree/main/daymark">Source code</a></span></footer>
+  <footer><span>Open Daymark</span><a href="./data.json">Data</a></footer>
  </main>
 </body>
 </html>
