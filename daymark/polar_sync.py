@@ -172,12 +172,16 @@ def main():
         upsert(db,mid,label,[{"key":"value","label":label,"unit":unit,"precision":precision}],
                day,{"value":round(v*scale,precision)},record_id)
     def duration_hours(value):
+        """Convert Polar protobuf seconds (e.g. '25320s') or ISO durations."""
         if not isinstance(value,str):return None
         import re
-        match=re.fullmatch(r"(?:(\d+)H)?(?:(\d+)M)?(?:(\d+(?:\.\d+)?)S)?",value.removeprefix("PT").removesuffix("s"))
-        if not match:return None
-        h,m,sec=match.groups()
-        return round(int(h or 0)+int(m or 0)/60+float(sec or 0)/3600,2)
+        sec=re.fullmatch(r"(\d+(?:\.\d+)?)s",value)
+        if sec:return round(float(sec.group(1))/3600,2)
+        iso=re.fullmatch(r"PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+(?:\.\d+)?)S)?",value)
+        if iso:
+            h,m,sec=iso.groups()
+            return round(int(h or 0)+int(m or 0)/60+float(sec or 0)/3600,2)
+        return None
 
     # The training endpoint requires LOCAL ISO date-times, not date-only values.
     # Activity and Nightly Recharge instead accept calendar dates.
@@ -200,11 +204,15 @@ def main():
             if not date or not sid:continue
             total_load=0
             load_found=False
+            report=session.get("trainingLoadReport") or {}
+            if isinstance(report,dict) and isinstance(report.get("cardioLoad"),(int,float)):
+                total_load=report["cardioLoad"]
+                load_found=True
             zone_ms=[0]*5
             zone_found=set()
             for exercise in session.get("exercises") or []:
                 load=(exercise.get("trainingLoadReport") or {}).get("cardioLoad")
-                if isinstance(load,(int,float)) and not isinstance(load,bool):
+                if not load_found and isinstance(load,(int,float)) and not isinstance(load,bool):
                     total_load+=load
                     load_found=True
                 for group in exercise.get("zones") or []:
