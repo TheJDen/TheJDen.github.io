@@ -1,7 +1,8 @@
 name: Polar nightly sync
 on:
   schedule:
-    - cron: "0 6,7 * * *"
+    # Single daily run, about 1 AM PST / 2 AM PDT. GitHub schedules can be delayed.
+    - cron: "0 9 * * *"
   workflow_dispatch:
     inputs:
       reauthorize:
