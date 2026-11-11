@@ -3,7 +3,7 @@ const $=id=>document.getElementById(id);
 const NS="http://www.w3.org/2000/svg",MS=86400000;
 const palette=["#2d7b70","#dc8a4f","#547da9","#a4769b","#c1a04e"];
 const GROUPS=["Body composition","Activity","Training","Recovery","Vitals","Nutrition"];
-let db,selected="weight",windowDays="90",componentKey=null;
+let db,selected="weight",windowDays="90",componentKey=null,sessionView=false;
 const el=(tag,txt,cls)=>{const n=document.createElement(tag);if(txt!==undefined&&txt!==null)n.textContent=txt;if(cls)n.className=cls;return n};
 const svg=(tag,attrs={},label)=>{const n=document.createElementNS(NS,tag);for(const [k,v] of Object.entries(attrs))n.setAttribute(k,String(v));if(label!==undefined)n.textContent=label;return n};
 const dateMs=d=>Date.parse(d+"T12:00:00Z");
@@ -67,7 +67,7 @@ function showGroups(){
 }
 function choose(id){
  if(!db.metrics.some(m=>m.id===id&&valid(m).length))return;
- selected=id;componentKey=null;
+ selected=id;componentKey=null;sessionView=false;
  windowDays=id==="weight"?"90":"30";$("range").value=windowDays;
  history.replaceState(null,"","#metric="+encodeURIComponent(id));
  showGroups();render();
@@ -86,6 +86,22 @@ function summary(m,rows){
 function findPoints(m,rows){
  let key=componentKey||m.components[0].key;
  let components=(m.id==="polar_workout_hr"||isStack(m))?m.components:[comp(m,key)];
+ if(m.id==="polar_workout_hr"&&!sessionView){
+  const durations=new Map(valid(db.metrics.find(x=>x.id==="polar_workout_duration")||{records:[]}).map(r=>[r.recordId,r.values.value]));
+  const grouped=new Map();
+  for(const r of rows){
+   let b=grouped.get(r.date);
+   if(!b){b={date:r.date,values:{},count:0,weightedSum:0,totalMinutes:0};grouped.set(r.date,b)}
+   b.count++;
+   const ave=r.values.average,mx=r.values.maximum,duration=durations.get(r.recordId);
+   if(typeof mx==="number")b.values.maximum=Math.max(mx,b.values.maximum===undefined?mx:b.values.maximum);
+   if(typeof ave==="number"&&typeof duration==="number"&&duration>0){b.weightedSum+=ave*duration;b.totalMinutes+=duration}
+  }
+  for(const b of grouped.values()){
+   if(b.totalMinutes>0)b.values.average=b.weightedSum/b.totalMinutes;
+  }
+  return {rows:[...grouped.values()].sort((a,b)=>a.date.localeCompare(b.date)),components,derived:true};
+ }
  if(isDailySum(m)){
   const byDate=new Map();
   for(const r of rows){let b=byDate.get(r.date);if(!b){b={date:r.date,values:{},count:0,status:r.status};byDate.set(r.date,b)}b.count++;
@@ -112,7 +128,7 @@ function labels(m,chartRows,derived){
  $("plot-title").textContent=m.label;
  $("plot-desc").textContent=m.description||(["polar_workout_hr","polar_workout_hr_zones"].includes(m.id)?"Measurements recorded by Polar during workouts.":"Dated measurements from "+m.source+".");
  $("source-label").textContent=m.classification.replace(/-/g," ")+" · "+m.source;
- let note=derived?"Daily totals are computed from recorded sessions. No missing days are filled in.":isInterval(m)?"Each paired set shows one workout's average and maximum heart rate. Same-day sessions are offset for visibility; horizontal position does not represent time of day.":m.id==="weight"?"Dots are original weigh-ins. The 7-day average is calculated from observed weigh-ins only, and is not written to the dataset.":"Every plotted mark corresponds to an actual source observation.";
+ let note=isInterval(m)&&!sessionView?"Each day shows the duration-weighted average HR across recorded sessions and the highest recorded workout peak. No missing sessions or days are invented.":derived?"Daily totals are computed from recorded sessions. No missing days are filled in.":isInterval(m)?"Each paired set shows one workout's average and maximum heart rate. Same-day sessions are offset for visibility; horizontal position does not represent time of day.":m.id==="weight"?"Dots are original weigh-ins. The 7-day average is calculated from observed weigh-ins only, and is not written to the dataset.":"Every plotted mark corresponds to an actual source observation.";
  if(m.id==="polar_recovery_indicator")note+=" Polar's recovery indicator is an ordinal scale, not a clinical diagnosis.";
  if(m.id==="polar_workout_hr_zones")note+=" Zone labels follow Polar's recorded exercise profiles; heart-rate boundaries can differ by workout.";
  if(m.lastSyncedOn)note+=" Source last imported "+dateText(m.lastSyncedOn)+".";
@@ -138,6 +154,12 @@ function render(){
   const row=el("label",null,"checkbox-label"),check=el("input");check.type="checkbox";check.checked=true;check.id="avg-visible";
   row.append(check,document.createTextNode("Show 7-day observed average"));
   check.addEventListener("change",()=>draw(m,data,check.checked));
+  opts.append(row);
+ }
+ if(m.id==="polar_workout_hr"){
+  const row=el("label",null,"checkbox-label"),check=el("input");check.type="checkbox";check.checked=sessionView;
+  row.append(check,document.createTextNode("Show individual workouts (instead of daily summary)"));
+  check.addEventListener("change",()=>{sessionView=check.checked;render()});
   opts.append(row);
  }
  draw(m,data,true);
@@ -225,7 +247,7 @@ function draw(m,data,showAvg){
     const a=r.values.average,b=r.values.maximum;if(typeof a!=="number"&&typeof b!=="number")return;
     const px=x(dateMs(date))+(j-(n-1)/2)*Math.min(8,dayWidth/Math.max(1,n));
     const lower=typeof a==="number"?a:b,upper=typeof b==="number"?b:a;
-    const msg=dateText(date)+" · session #"+(j+1)+" of "+n+" · average "+(a??"—")+" bpm · maximum "+(b??"—")+" bpm";
+    const msg=r.count&&!sessionView?dateText(date)+" · "+r.count+" recorded workout(s) · duration-weighted mean "+(typeof a==="number"?fmt(a,1):"—")+" bpm · highest peak "+(b??"—")+" bpm":dateText(date)+" · session #"+(j+1)+" of "+n+" · average "+(a??"—")+" bpm · maximum "+(b??"—")+" bpm";
     if(a!==undefined&&b!==undefined){const bar=svg("line",{x1:px,x2:px,y1:y(lower),y2:y(upper),stroke:"#93aaa5","stroke-width":2});mark(bar,msg)}
     if(typeof a==="number")mark(svg("circle",{cx:px,cy:y(a),r:4.5,fill:colorFor(0),stroke:"#fff","stroke-width":1.5}),msg);
     if(typeof b==="number")mark(svg("circle",{cx:px,cy:y(b),r:4.5,fill:colorFor(1),stroke:"#fff","stroke-width":1.5}),msg);
@@ -247,7 +269,7 @@ function draw(m,data,showAvg){
    legend("7-day observed average",colorFor(1));
   }
  }
- if(interval){legend("Workout average",colorFor(0));legend("Workout maximum",colorFor(1))}
+ if(interval){legend(sessionView?"Workout average":"Daily duration-weighted mean",colorFor(0));legend(sessionView?"Workout maximum":"Daily highest workout peak",colorFor(1))}
  else if(stack)series.forEach((c,i)=>legend(c.label,colorFor(i)));
  else legend(series[0].label,colorFor(0));
  root.prepend(plot);
