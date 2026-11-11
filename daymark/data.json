@@ -474,7 +474,8 @@
           "status": "partial",
           "note": "Day in progress at time of Apple Health import"
         }
-      ]
+      ],
+      "lastSyncedOn": "2026-11-10"
     },
     {
       "id": "distance",
@@ -591,7 +592,8 @@
           "status": "partial",
           "note": "Day in progress at time of Apple Health import"
         }
-      ]
+      ],
+      "lastSyncedOn": "2026-11-10"
     },
     {
       "id": "active_energy",
@@ -708,7 +710,8 @@
           "status": "partial",
           "note": "Day in progress at time of Apple Health import"
         }
-      ]
+      ],
+      "lastSyncedOn": "2026-11-10"
     },
     {
       "id": "blood_pressure",
