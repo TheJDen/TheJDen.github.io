@@ -12,6 +12,19 @@ A public, provenance-first personal metrics dashboard published at `/daymark/` i
 
 **Freshness:** GitHub Pages serves a static JSON snapshot. A ChatGPT task has been scheduled for daily Apple Health-to-GitHub updates at approximately 8 AM Pacific; automatic execution has not yet been verified. The Polar workflow is scheduled nightly. The UI shows per-source import dates so stale observations aren't mistaken for live data.
 
+## Viewer experience (2026-11-10)
+
+- The homepage introduces the public measurement journal, explains gaps/provenance, and groups the explorer into body composition, activity, training and recovery.
+- `app.js` is the standalone renderer and `ui.css` is the responsive style sheet. `index.html` stays small; new metrics can be added to `data.json` without rewriting the page.
+- Weight uses scatter observations and an on-screen 7-day observed rolling average. Daily activity uses separate calendar-day bars. Same-date Polar workouts are **not** plotted on top of each other: duration/energy use transparent daily sums; workout HR defaults to duration-weighted daily mean and highest session peak, with an individual-session toggle.
+- Entries from the original dataset remain available in the table and JSON. Computed display aggregates are not persisted as fake source observations.
+- Graphs have readable axis ticks, explicit labels/units, keyboard-focusable recorded marks, responsive presentation, and partial-day/freshness disclosures.
+- Metrics without any observations, and all-zero series, are kept out of the primary navigation and remain in the source data (with a disclosure in the sidebar).
+
+## Polar data diagnostics
+
+The scheduled importer now logs aggregate counts of detailed sessions, exercises, HR zone groups, sessions with cardio load, and available sleep/activity days; it does **not** log sample-level biometrics, names, GPS or raw API payloads. The next successful run can distinguish a missing data source from a parsing bug. Until then, absence of published sleep or HR zones is not proof the device lacks those values. See [Polar API v4](https://www.polar.com/polar-api-v4/) for exact response shapes.
+
 ## Data contract
 
 The UI loads only `data.json`. New metrics should require editing the data file, not the interface code.
