@@ -60,7 +60,11 @@ def main():
     secret=os.environ["POLAR_CLIENT_SECRET"]
     refresh=os.getenv("POLAR_REFRESH_TOKEN")
     auth_code=os.getenv("POLAR_AUTH_CODE")
-    if refresh:
+    reauthorize=os.getenv("POLAR_REAUTHORIZE","false").lower()=="true"
+    if reauthorize:
+        if not auth_code:raise RuntimeError("Reauthorization requested; set the one-time POLAR_AUTH_CODE GitHub secret")
+        form={"grant_type":"authorization_code","code":auth_code,"redirect_uri":REDIRECT}
+    elif refresh:
         form={"grant_type":"refresh_token","refresh_token":refresh}
     elif auth_code:
         form={"grant_type":"authorization_code","code":auth_code,"redirect_uri":REDIRECT}
@@ -68,6 +72,13 @@ def main():
         print("No authorization yet; set POLAR_AUTH_CODE as a GitHub secret and run workflow")
         return
     tokens=request(TOKEN,form=form,basic=(client,secret))
+    if reauthorize:
+        needed=set("activity:read training_sessions:read sleep:read nightly_recharge:read continuous_samples:read ppi_data:read tests:read devices:read sports:read training_targets:read".split())
+        granted=set(tokens.get("scope","").split())
+        missing=needed-granted
+        if missing:
+            raise RuntimeError("Polar did not grant requested scopes: "+", ".join(sorted(missing)))
+        print("Polar reauthorization granted all requested scopes")
     # Token refresh may rotate the refresh token. Update encrypted GitHub secret
     # BEFORE publishing or making further API requests.
     new_refresh=tokens.get("refresh_token")
@@ -158,8 +169,47 @@ def main():
         h,m,sec=match.groups()
         return round(int(h or 0)+int(m or 0)/60+float(sec or 0)/3600,2)
 
+    # Extended training details use a one-day window when features are requested.
+    # Publish only zone durations and cardio load; never raw samples or routes.
+    detailed_days=30 if os.getenv("GITHUB_EVENT_NAME")=="workflow_dispatch" else 8
+    for offset in range(detailed_days):
+        day=now.date()-dt.timedelta(days=offset)
+        tomorrow=day+dt.timedelta(days=1)
+        qday=urllib.parse.urlencode({"from":day.isoformat()+"T00:00:00",
+                                    "to":tomorrow.isoformat()+"T00:00:00"})
+        detailed=optional("/training-sessions/list?"+qday+"&features=zones,training-load-report")
+        for session in detailed.get("trainingSessions",[]):
+            date=str(session.get("startTime",""))[:10]
+            sid=(session.get("identifier") or {}).get("id")
+            if not date or not sid:continue
+            total_load=0
+            load_found=False
+            zone_ms=[0]*5
+            zone_found=set()
+            for exercise in session.get("exercises") or []:
+                load=(exercise.get("trainingLoadReport") or {}).get("cardioLoad")
+                if isinstance(load,(int,float)) and not isinstance(load,bool):
+                    total_load+=load
+                    load_found=True
+                for group in exercise.get("zones") or []:
+                    if group.get("type")!="ZONE_TYPE_HEART_RATE":continue
+                    for i,z in enumerate((group.get("zones") or [])[:5]):
+                        v=z.get("inZone")
+                        if isinstance(v,(int,float)) and v>=0:
+                            zone_ms[i]+=v
+                            zone_found.add(i)
+            if load_found:
+                scalar("polar_cardio_load","Polar cardio load",date,total_load,"TRIMP",1,str(sid))
+                next(m for m in db["metrics"] if m["id"]=="polar_cardio_load")["classification"]="device-estimate"
+            if zone_found:
+                values={"zone"+str(i+1):round(zone_ms[i]/60000,1) for i in sorted(zone_found)}
+                components=[{"key":"zone"+str(i+1),"label":"Polar HR zone "+str(i+1),
+                             "unit":"min","precision":1} for i in range(5)]
+                upsert(db,"polar_workout_hr_zones","Polar workout HR zone time",
+                       components,date,values,str(sid))
+
     # Detailed activity, sleep and recovery features require one-day windows.
-    for offset in range(8):
+    for offset in range(detailed_days):
         day=now.date()-dt.timedelta(days=offset)
         tomorrow=day+dt.timedelta(days=1)
         qday=urllib.parse.urlencode({"from":day.isoformat()+"T00:00:00",
@@ -205,7 +255,10 @@ def main():
                 ("recoveryIndicator","polar_recovery_indicator","Polar recovery indicator","",0)):
                 scalar(mid,label,date,night.get(field),unit,precision)
 
-    for m in db["metrics"]:m["records"].sort(key=lambda r:(r["date"],r.get("recordId","")))
+    for m in db["metrics"]:
+        m["records"].sort(key=lambda r:(r["date"],r.get("recordId","")))
+        if m["id"].startswith("polar_"):
+            m["lastSyncedOn"]=now.date().isoformat()
     db["updatedOn"]=now.date().isoformat()
     DATA.write_text(json.dumps(db,indent=2,ensure_ascii=False)+"\n")
     print("Imported",len(sessions.get("trainingSessions",[])),"training sessions")
