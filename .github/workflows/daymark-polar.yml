@@ -3,6 +3,12 @@ on:
   schedule:
     - cron: "0 6,7 * * *"
   workflow_dispatch:
+    inputs:
+      reauthorize:
+        description: 'Exchange a new Polar authorization code for expanded permissions'
+        type: boolean
+        required: false
+        default: false
 permissions:
   contents: write
 concurrency:
@@ -21,6 +27,7 @@ jobs:
           POLAR_CLIENT_ID: ${{ secrets.POLAR_CLIENT_ID }}
           POLAR_CLIENT_SECRET: ${{ secrets.POLAR_CLIENT_SECRET }}
           POLAR_AUTH_CODE: ${{ secrets.POLAR_AUTH_CODE }}
+          POLAR_REAUTHORIZE: ${{ github.event_name == 'workflow_dispatch' && inputs.reauthorize }}
           POLAR_REFRESH_TOKEN: ${{ secrets.POLAR_REFRESH_TOKEN }}
           GH_TOKEN: ${{ secrets.DAYMARK_GH_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
