@@ -2,14 +2,15 @@
 
 A public, provenance-first personal metrics dashboard published at `/daymark/` in this existing GitHub Pages repository.
 
-## Current release (2026-11-08)
+## Current release (2026-11-10)
 
-- **53 original scale check-ins** (2026-08-21 through 2026-11-08), from the user's reported weigh-in log.
-- **14 dated Apple Health daily aggregates** each for steps, walking/running distance, and active energy (2026-10-26 through 2026-11-08).
+- **55 original scale check-ins** (2026-08-21 through 2026-11-10), from the user's reported weigh-in log.
+- **16 dated Apple Health daily aggregates** each for steps, walking/running distance, and active energy (2026-10-26 through 2026-11-10). November 10 is explicitly marked as a **partial-day snapshot**; earlier days are complete as returned by Apple Health. Reimporting may update past device aggregates.
 - **No synthetic or interpolated points**. Previously interpolated/unmeasured weight entries (including 2026-08-29, 2026-09-11, 2026-09-24, and 2026-10-06) were deliberately excluded.
+- **37 Polar workout sessions** imported as of November 10; nightly workflow is installed. It can add session HR zones and cardio load if returned by the API.
 - No public raw heart-rate traces, GPS route points, personal identifiers, medical diagnoses, or private API credentials.
 
-This release is a snapshot. **It is not yet an unattended, continuously refreshed integration.**
+**Freshness:** GitHub Pages serves a static JSON snapshot. A ChatGPT task has been scheduled for daily Apple Health-to-GitHub updates at approximately 8 AM Pacific; automatic execution has not yet been verified. The Polar workflow is scheduled nightly. The UI shows per-source import dates so stale observations aren't mistaken for live data.
 
 ## Data contract
 
@@ -19,7 +20,7 @@ The UI loads only `data.json`. New metrics should require editing the data file,
 - `timezone` establishes the calendar-day interpretation.
 - `metrics[]` contains `id`, `label`, `group`, `description`, `kind`, `components[]`, `source`, `classification`, and `records[]`.
 - `components[]` supports scalar (`value`) and multiple simultaneous components (e.g. `systolic`, `diastolic`). Component attributes: `key`, `label`, `unit`, and `precision`.
-- `records[]` stores `{ "date": "YYYY-MM-DD", "values": {"value": 123} }`. Missing dates are absent, not represented with guessed values or zeroes.
+- `records[]` stores `{ "date": "YYYY-MM-DD", "values": {"value": 123} }`. A `status: "partial"` flag marks an incomplete calendar-day snapshot. Missing dates are absent, not represented with guessed values or zeroes. `lastSyncedOn` on a metric reports when that source was last imported.
 - `documents[]` is reserved for authored qualitative records, kept distinct from observations.
 - `rubrics[]` is reserved for **pre-published**, reproducible grading schemes. No grading scale has been approved and none is active.
 - `classification` is one of `measurement`, `device-recorded`, `device-estimate`, or `estimate`. This is a provenance classification, not a clinical reliability rating.
@@ -30,20 +31,21 @@ An incoming measurement must have a stable metric key, calendar date or original
 
 | Source | Connection | Current use | Future sync |
 | --- | --- | --- | --- |
-| Apple Health | Available via connected ChatGPT Health | Real dated activity data imported into this snapshot | ChatGPT can import fresh data and commit changes on request; unattended sync to GitHub is **not configured** |
-| Historical weight log | Available from verified prior weigh-ins | 53 actual measurements included | Add future weighed check-ins as dated observations |
-| Polar Flow | Requires separate developer authorization | No Polar workout payload has been imported | Use Polar AccessLink **v4**, not legacy v3; request only needed OAuth scopes |
+| Apple Health | Connected via ChatGPT Health | 16 daily aggregates through Nov 10 (partial current day) | A daily ChatGPT-to-GitHub sync was scheduled for ~8 AM PT; its first unattended run has not been verified |
+| Historical weight log | Available from verified prior weigh-ins | 55 actual measurements included | Add future weighed check-ins as dated observations |
+| Polar Flow | Existing AccessLink v4 connection | 37 sessions in public data; nightly sync active in repository | A **new OAuth consent** is required to activate the expanded scope request in `polar-callback.html` |
 | Strava | Requires separate authorization for API access | No Strava data imported | Polar Flow's built-in Partner > Strava connection can sync qualifying **future** workout activities |
 | GitHub Pages | Repository files committed to `main` | Static, public HTML and JSON | Verify Pages setting/deployment if `/daymark/` is not live |
 
 ### Polar Flow setup
 
-1. Open [Polar AccessLink developer portal](https://admin.polaraccesslink.com/) while signed into Polar Flow.
-2. Register an app named **Open Daymark** with OAuth callback URI on a service capable of securely exchanging the callback code and storing tokens. GitHub Pages alone is static and cannot securely perform that exchange.
-3. Request the narrowest scopes: `training_sessions:read` for workouts, `sleep:read` for sleep, `activity:read` for daily activity; add `nightly_recharge:read` only if desired.
-4. Complete OAuth consent. Keep client secret, access tokens, and refresh tokens in a private secret store **not** in this public repository or chat.
-5. Import workout fields with stable Polar session IDs, timestamps, sport, duration, heart rate values when supplied; exclude location, routes, GPS and raw sensor traces by default.
-6. Deduplicate sessions by provider ID. Keep Polar workout data and Apple Health daily aggregations as different series (do not double-count cross-posted workouts).
+1. Use the **existing** Open Daymark client at [Polar AccessLink developer portal](https://admin.polaraccesslink.com/) and confirm its callback URL is `https://thejden.github.io/daymark/polar-callback.html`.
+2. Open [Daymark's Polar authorization page](https://thejden.github.io/daymark/polar-callback.html), enter the **client ID only** and complete Polar consent. The page now requests `activity:read`, `training_sessions:read`, `sleep:read`, `nightly_recharge:read`, `continuous_samples:read`, `ppi_data:read`, `tests:read`, `devices:read`, `sports:read`, and `training_targets:read`. It deliberately does not request `routes:read` or `profile:read`.
+3. Copy the short-lived one-time authorization code to the GitHub Actions repository secret named `POLAR_AUTH_CODE` (not to chat or public files). In [Polar nightly sync](https://github.com/TheJDen/TheJDen.github.io/actions/workflows/daymark-polar.yml), choose **Run workflow**, enable **reauthorize**, and execute. The workflow exchanges the code, verifies granted scopes, and rotates the encrypted refresh-token secret.
+4. On confirmed workflow success, delete the one-time `POLAR_AUTH_CODE` secret; leave `POLAR_REFRESH_TOKEN`, `POLAR_CLIENT_ID`, `POLAR_CLIENT_SECRET`, and `DAYMARK_GH_TOKEN` in GitHub Actions secrets. Ordinary scheduled runs will continue using the refresh token.
+5. Expanded scopes enable future importers, but raw continuous HR/beat intervals, fitness tests, and devices are **not automatically published**. New health-related public metrics require an explicit review.
+6. Import workout fields with stable Polar session IDs, timestamps, duration, HR summaries, and optional per-workout cardio load and Polar HR-zone durations; exclude location, routes, GPS and raw sensor traces by default.
+7. Deduplicate sessions by provider ID. Keep Polar workout data and Apple Health daily aggregations as different series (do not double-count cross-posted workouts).
 
 API documentation: https://www.polar.com/polar-api-v4/
 
@@ -57,7 +59,7 @@ Sources:
 
 ### Apple Health and privacy
 
-Apple Health data is accessible through the connected Health capability in ChatGPT, but that does not create a GitHub Pages background data feed. Updating Daymark in chat involves requesting a fresh read, validating dates and provenance, and committing only approved public metrics to `data.json`.
+Apple Health data is accessible through the connected Health capability in ChatGPT, not via a public Apple Health REST API. The scheduled ChatGPT sync is a separate task from GitHub Actions and remains subject to connector availability. Each run should read actual dated values, validate provenance, and commit only the three approved public activity metrics to `data.json`. The site is static and cannot refresh independently.
 
 Even though the website is intended to be public, avoid raw GPS, location traces, unreviewed medical records and secrets in the public repository. Sensor-based calorie expenditure and distance are *estimates* even when they originate from Apple Health.
 
