@@ -149,13 +149,13 @@ function render(){
  const opts=$("plot-options");
  if(m.id==="weight"){
   const row=el("label",null,"checkbox-label"),check=el("input");check.type="checkbox";check.checked=true;check.id="avg-visible";
-  row.append(check,document.createTextNode("Show 7-day observed average"));
+  row.append(check,document.createTextNode("7-day average"));
   check.addEventListener("change",()=>draw(m,data,check.checked));
   opts.append(row);
  }
  if(m.id==="polar_workout_hr"){
   const row=el("label",null,"checkbox-label"),check=el("input");check.type="checkbox";check.checked=sessionView;
-  row.append(check,document.createTextNode("Show individual workouts (instead of daily summary)"));
+  row.append(check,document.createTextNode("Individual workouts"));
   check.addEventListener("change",()=>{sessionView=check.checked;render()});
   opts.append(row);
  }
@@ -205,11 +205,16 @@ function draw(m,data,showAvg){
   axis.append(svg("text",{x:x(t),y:h-16,"text-anchor":i===0?"start":i===nticks-1?"end":"middle",fill:"#72847e","font-size":12},shortDate(t)));
  }
  const live=el("div",null,"sr-only");live.id="chart-accessible-detail";live.setAttribute("aria-live","polite");root.append(live);
+ const selection=el("div",null,"point-detail");selection.hidden=true;
+ const message=el("span"),dismiss=el("button","Close","point-dismiss");
+ dismiss.type="button";dismiss.addEventListener("click",()=>{selection.hidden=true});
+ selection.append(message,dismiss);root.append(selection);
  const tool=makeTip(root);
  function mark(node,message){
   node.setAttribute("tabindex","0");node.setAttribute("role","graphics-symbol");node.setAttribute("aria-label",message);
   node.append(svg("title",{},message));node.addEventListener("pointermove",ev=>tool.show(ev,message));
   node.addEventListener("pointerleave",tool.hide);
+  node.addEventListener("click",()=>{selection.hidden=false;selection.children[0].textContent=message;tool.hide()});
   node.addEventListener("focus",()=>{const live=$("chart-accessible-detail");if(live)live.textContent=message});
   plot.append(node);
  }
