@@ -14,6 +14,7 @@ const fmt=(v,p=0)=>typeof v==="number"?v.toLocaleString("en-US",{maximumFraction
 const comp=(m,key)=>m.components.find(c=>c.key===key)||m.components[0];
 const unit=(c,v)=>fmt(v,c.precision??0)+(c.unit?" "+c.unit:"");
 const valid=m=>(m.records||[]).filter(r=>r.date&&r.values&&Object.values(r.values).some(v=>typeof v==="number"&&Number.isFinite(v)||typeof v==="string"&&v.trim())).slice().sort((a,b)=>a.date.localeCompare(b.date)||(a.recordId||"").localeCompare(b.recordId||""));
+const onlyZeros=m=>{const n=valid(m).flatMap(r=>Object.values(r.values).filter(v=>typeof v==="number"));return n.length>0&&n.every(v=>v===0)};
 const kind=m=>m.id==="weight"?"Body composition":m.id.startsWith("polar_nightly")||m.id==="polar_ans_status"||m.id==="polar_recovery_indicator"||m.id.startsWith("polar_sleep")?"Recovery":m.id.startsWith("polar_")?"Training":m.group==="Polar"?"Training":m.group;
 const metric=()=>db.metrics.find(m=>m.id===selected);
 const isSessions=m=>["polar_workout_duration","polar_workout_calories","polar_workout_hr","polar_workout_distance","polar_training_load","polar_cardio_load","polar_workout_hr_zones","polar_recovery_time"].includes(m.id);
@@ -40,7 +41,7 @@ function showCards(){
 }
 function showGroups(){
  const host=$("groups");host.replaceChildren();
- const populated=db.metrics.filter(m=>valid(m).length>0);
+ const populated=db.metrics.filter(m=>valid(m).length>0&&!onlyZeros(m));
  for(const group of GROUPS){
   const items=populated.filter(m=>kind(m)===group);if(!items.length)continue;
   const section=el("div",null,"metric-group");textNode(section,"h3",group,"group-label");
@@ -51,6 +52,12 @@ function showGroups(){
    textNode(item,"small",valid(m).length+" "+(isSessions(m)?"sessions":"observations"),"metric-link-count");
    item.addEventListener("click",()=>choose(m.id));section.append(item);
   }host.append(section);
+ }
+ const zeroOnly=db.metrics.filter(m=>onlyZeros(m));
+ if(zeroOnly.length){
+  const detail=el("details",null,"planned");detail.append(el("summary",zeroOnly.length+" zero-only metrics"));
+  for(const m of zeroOnly)textNode(detail,"div",m.label+" (only zero values recorded)","planned-item");
+  host.append(detail);
  }
  const empty=db.metrics.filter(m=>!valid(m).length);
  if(empty.length){
@@ -107,6 +114,7 @@ function labels(m,chartRows,derived){
  $("source-label").textContent=m.classification.replace(/-/g," ")+" · "+m.source;
  let note=derived?"Daily totals are computed from recorded sessions. No missing days are filled in.":isInterval(m)?"Each paired set shows one workout's average and maximum heart rate. Same-day sessions are offset for visibility; horizontal position does not represent time of day.":m.id==="weight"?"Dots are original weigh-ins. The 7-day average is calculated from observed weigh-ins only, and is not written to the dataset.":"Every plotted mark corresponds to an actual source observation.";
  if(m.id==="polar_recovery_indicator")note+=" Polar's recovery indicator is an ordinal scale, not a clinical diagnosis.";
+ if(m.id==="polar_workout_hr_zones")note+=" Zone labels follow Polar's recorded exercise profiles; heart-rate boundaries can differ by workout.";
  if(m.lastSyncedOn)note+=" Source last imported "+dateText(m.lastSyncedOn)+".";
  if(chartRows.some(r=>r.status==="partial"))note+=" * Includes a partial-day value.";
  $("note").textContent=note;
@@ -177,13 +185,13 @@ function draw(m,data,showAvg){
   const t=xMin+(xMax-xMin)*i/Math.max(1,nticks-1);
   axis.append(svg("text",{x:x(t),y:h-16,"text-anchor":i===0?"start":i===nticks-1?"end":"middle",fill:"#72847e","font-size":12},shortDate(t)));
  }
+ const live=el("div",null,"sr-only");live.id="chart-accessible-detail";live.setAttribute("aria-live","polite");root.append(live);
  const tool=makeTip(root);
- let didLegend=false;
  function mark(node,message){
   node.setAttribute("tabindex","0");node.setAttribute("role","graphics-symbol");node.setAttribute("aria-label",message);
   node.append(svg("title",{},message));node.addEventListener("pointermove",ev=>tool.show(ev,message));
   node.addEventListener("pointerleave",tool.hide);
-  node.addEventListener("focus",()=>{$("note").textContent=message});
+  node.addEventListener("focus",()=>{const live=$("chart-accessible-detail");if(live)live.textContent=message});
   plot.append(node);
  }
  function legend(label,color){
