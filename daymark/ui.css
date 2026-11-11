@@ -85,3 +85,8 @@ footer{border-top:1px solid var(--border);margin-top:70px;padding-top:20px;font-
 .about-details p{font-size:13px;color:var(--sub);line-height:1.65;margin:12px 0}
 footer{margin-top:28px;padding-top:18px}
 @media(max-width:600px){.hero{padding:18px 0 16px}.panel{padding:16px}.plot-heading h3{font-size:20px}.chartbox{min-height:210px}.explorer{margin-top:27px}.about{margin-top:28px}}
+
+.point-detail{display:flex;align-items:flex-start;gap:14px;justify-content:space-between;border:1px solid #d4e4d9;background:#f4f9f5;color:#365e4a;padding:10px 12px;margin:10px 0 0;border-radius:9px;font-size:12px;line-height:1.5}
+.point-detail[hidden]{display:none}
+.point-dismiss{border:0;background:none;color:#54796a;font-size:11px;font-weight:700;padding:2px;white-space:nowrap}
+.plot-svg [tabindex="0"]{cursor:pointer}
