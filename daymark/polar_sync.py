@@ -179,15 +179,21 @@ def main():
         h,m,sec=match.groups()
         return round(int(h or 0)+int(m or 0)/60+float(sec or 0)/3600,2)
 
-    # Extended training details use a one-day window when features are requested.
-    # Publish only zone durations and cardio load; never raw samples or routes.
+    # The training endpoint requires LOCAL ISO date-times, not date-only values.
+    # Activity and Nightly Recharge instead accept calendar dates.
+    # Publish only aggregate zone duration/cardio load; no raw samples or GPS.
     detailed_days=30 if os.getenv("GITHUB_EVENT_NAME")=="workflow_dispatch" else 8
+    detailed_success=0
     for offset in range(detailed_days):
         day=now.date()-dt.timedelta(days=offset)
         tomorrow=day+dt.timedelta(days=1)
-        qday=urllib.parse.urlencode({"from":day.isoformat(),
-                                    "to":tomorrow.isoformat()})
-        detailed=optional("/training-sessions/list?"+qday+"&features=zones,training-load-report")
+        qtraining=urllib.parse.urlencode({
+            "from":day.isoformat()+"T00:00:00",
+            "to":tomorrow.isoformat()+"T00:00:00"
+        })
+        detailed=optional("/training-sessions/list?"+qtraining+"&features=zones,training-load-report")
+        if detailed.get("trainingSessions") is not None:
+            detailed_success+=1
         for session in detailed.get("trainingSessions",[]):
             date=str(session.get("startTime",""))[:10]
             sid=(session.get("identifier") or {}).get("id")
@@ -218,7 +224,8 @@ def main():
                 upsert(db,"polar_workout_hr_zones","Polar workout HR zone time",
                        components,date,values,str(sid))
 
-    # Detailed activity, sleep and recovery features require one-day windows.
+    print("Polar detailed training days with responses:",detailed_success,"of",detailed_days)
+    # Detailed activity, sleep and recovery use one-day calendar-date windows.
     for offset in range(detailed_days):
         day=now.date()-dt.timedelta(days=offset)
         tomorrow=day+dt.timedelta(days=1)
@@ -255,7 +262,16 @@ def main():
             analysis=evaluation.get("analysis") or {}
             scalar("polar_sleep_efficiency","Polar sleep efficiency",date,analysis.get("efficiencyPercent"),"%",1)
         recharge=optional("/nightly-recharge-results?"+qday)
-        for night in (recharge.get("nightlyRechargeResults") or {}).get("nightlyRechargeResults",[]):
+        recharge_results=recharge.get("nightlyRechargeResults") or []
+        # The outer collection may already be a list, or a wrapped object.
+        if isinstance(recharge_results,dict):
+            recharge_results=recharge_results.get("nightlyRechargeResults") or []
+        if not isinstance(recharge_results,list):
+            print("Unexpected Nightly Recharge response structure; skipped")
+            recharge_results=[]
+        for night in recharge_results:
+            if not isinstance(night,dict):
+                continue
             date=night.get("sleepResultDate")
             if not date:continue
             for field,mid,label,unit,precision in (
