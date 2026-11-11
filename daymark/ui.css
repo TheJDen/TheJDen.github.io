@@ -53,3 +53,35 @@ footer{border-top:1px solid var(--border);margin-top:70px;padding-top:20px;font-
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.overview-card{transition:none}}
 
 .sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* Compact dashboard: secondary explanations stay in expandable details. */
+.hero{padding:25px 0 23px;max-width:none}
+.hero h1{font-size:clamp(28px,3vw,38px);line-height:1.15;letter-spacing:-1.2px;font-weight:690}
+.hero p.lede{font-size:14px;line-height:1.5;margin:9px 0 13px}
+.update{display:block;color:#81938a;font-size:12px}
+.update:before{display:none}
+.section-title{margin:22px 0 12px}
+.section-title h2{font-size:18px}
+.explorer{margin-top:32px}
+.panel{padding:21px 22px}
+.plot-heading{align-items:center}
+.plot-heading h3{font-size:21px;margin:0 0 4px}
+.metric-facts{display:block;border:0;background:transparent;border-radius:0;font-size:12px;color:#87978e;margin:0;padding:0}
+.plot-options{margin:18px 0 8px}
+.chartbox{min-height:250px}
+.chart-details{margin-top:16px;border-top:1px solid #edf1ed;padding-top:12px;color:#72857a;font-size:12px}
+.chart-details summary,.about-details summary{cursor:pointer;display:inline-flex;align-items:center;gap:5px;color:#5b766a;font-weight:600;list-style:none}
+.chart-details summary::-webkit-details-marker,.about-details summary::-webkit-details-marker{display:none}
+.chart-details summary:after,.about-details summary:after{content:"⌄";font-size:15px;margin-left:4px;transition:transform .15s}
+.chart-details[open] summary:after,.about-details[open] summary:after{transform:rotate(180deg)}
+.chart-details-body{padding-top:11px;max-width:700px}
+.chart-details-body p{font-size:12px;line-height:1.65;color:#72857a;margin:0 0 10px}
+.chart-details-body .source-label{font-weight:500;color:#658377}
+.chart-details-body .note{border-top:0;padding-top:0;margin-top:0}
+.table-head{margin-bottom:8px}
+.table-head h3{font-size:16px}
+.about{margin-top:36px}
+.about-details{border-top:1px solid var(--border);padding-top:18px;max-width:720px;font-size:13px}
+.about-details p{font-size:13px;color:var(--sub);line-height:1.65;margin:12px 0}
+footer{margin-top:28px;padding-top:18px}
+@media(max-width:600px){.hero{padding:18px 0 16px}.panel{padding:16px}.plot-heading h3{font-size:20px}.chartbox{min-height:210px}.explorer{margin-top:27px}.about{margin-top:28px}}
