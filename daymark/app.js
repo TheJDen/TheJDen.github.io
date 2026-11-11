@@ -34,7 +34,8 @@ function showCards(){
   card.type="button";
   textNode(card,"span",m.label,"small-label");
   textNode(card,"strong",record?unit(c,record.values[c.key]):"—","big-number");
-  textNode(card,"span",record?(dateText(record.date)+(record.status==="partial"?" · partial":"")):"No readings yet","card-date");
+  textNode(card,"span",record?shortDate(dateMs(record.date)):"—","card-date");
+  card.title=[m.label,record?"Recorded "+dateText(record.date):"No observations",record?.status==="partial"?"Partial-day reading":null,m.lastSyncedOn?"Imported "+dateText(m.lastSyncedOn):null,m.source].filter(Boolean).join(" · ");
   card.addEventListener("click",()=>choose(m.id));
   cards.append(card);
  }
@@ -49,7 +50,7 @@ function showGroups(){
    const item=el("button",null,"metric-link"+(m.id===selected?" active":""));
    item.type="button";item.dataset.id=m.id;
    textNode(item,"span",m.label,"metric-link-title");
-   textNode(item,"small",valid(m).length+" "+(isSessions(m)?"sessions":"observations"),"metric-link-count");
+   item.title=valid(m).length+" "+(isSessions(m)?"sessions":"observations")+" · "+m.source;
    item.addEventListener("click",()=>choose(m.id));section.append(item);
   }host.append(section);
  }
@@ -75,13 +76,9 @@ function choose(id){
 }
 function summary(m,rows){
  const host=$("summary");host.replaceChildren();
- const all=valid(m),head=all.at(-1),latest=rows.at(-1);
- const items=[
-  [String(all.length),isSessions(m)?"Recorded sessions":"Observations"],
-  [head?dateText(head.date):"—","Latest recorded"],
-  [m.lastSyncedOn?dateText(m.lastSyncedOn):"Not available","Last imported"]
- ];
- for(const [value,label] of items){const box=el("div",null,"fact");textNode(box,"strong",value);textNode(box,"span",label);host.append(box)}
+ const all=valid(m),head=all.at(-1);
+ host.textContent=all.length+" "+(isSessions(m)?"sessions":"readings")+(head?" · "+shortDate(dateMs(head.date)):"");
+ host.title=(head?"Latest observation: "+dateText(head.date):"No observations")+(m.lastSyncedOn?" · Imported: "+dateText(m.lastSyncedOn):"");
 }
 function findPoints(m,rows){
  let key=componentKey||m.components[0].key;
@@ -279,7 +276,8 @@ function start(x){
  const fromHash=decodeURIComponent(location.hash.replace(/^#metric=/,""));
  if(location.hash.startsWith("#metric=")&&db.metrics.some(m=>m.id===fromHash&&valid(m).length))selected=fromHash;
  $("range").addEventListener("change",ev=>{windowDays=ev.target.value;render()});
- textNode($("update"),"span","Data snapshot updated "+(db.updatedOn?dateText(db.updatedOn):"date unknown"));
+ $("update").textContent=db.updatedOn?shortDate(dateMs(db.updatedOn)):"—";
+ $("update").title=db.updatedOn?"Dataset last updated "+dateText(db.updatedOn):"No dataset update date";
  showCards();showGroups();render();
 }
 fetch("./data.json",{cache:"no-store"}).then(r=>{if(!r.ok)throw new Error("Data file unavailable");return r.json()}).then(start)
