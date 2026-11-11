@@ -72,6 +72,13 @@ def main():
         print("No authorization yet; set POLAR_AUTH_CODE as a GitHub secret and run workflow")
         return
     tokens=request(TOKEN,form=form,basic=(client,secret))
+    # Polar documents the scope string in OAuth token responses. Log only scope
+    # names (never access tokens or refresh tokens) to audit existing consent.
+    granted_scope_text=tokens.get("scope")
+    if isinstance(granted_scope_text,str) and granted_scope_text.strip():
+        print("Polar token granted scopes:",", ".join(sorted(set(granted_scope_text.split()))))
+    else:
+        print("Polar token response did not include readable scope information")
     if reauthorize:
         needed=set("activity:read training_sessions:read sleep:read nightly_recharge:read continuous_samples:read ppi_data:read tests:read devices:read sports:read training_targets:read".split())
         granted=set(tokens.get("scope","").split())
