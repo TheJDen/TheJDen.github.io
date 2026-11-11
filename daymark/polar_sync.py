@@ -188,6 +188,10 @@ def main():
     # Publish only aggregate zone duration/cardio load; no raw samples or GPS.
     detailed_days=30 if os.getenv("GITHUB_EVENT_NAME")=="workflow_dispatch" else 8
     detailed_success=0
+    diagnostics={"detailed_sessions":0,"exercises":0,"hr_zone_groups":0,
+                 "sessions_with_zones":0,"sessions_with_load":0,
+                 "sleep_nights":0,"sleep_evaluations":0,"sleep_scores":0,
+                 "activity_days":0,"single_device_days":0}
     for offset in range(detailed_days):
         day=now.date()-dt.timedelta(days=offset)
         tomorrow=day+dt.timedelta(days=1)
@@ -199,6 +203,8 @@ def main():
         if detailed.get("trainingSessions") is not None:
             detailed_success+=1
         for session in detailed.get("trainingSessions",[]):
+            if not isinstance(session,dict):continue
+            diagnostics["detailed_sessions"]+=1
             date=str(session.get("startTime",""))[:10]
             sid=(session.get("identifier") or {}).get("id")
             if not date or not sid:continue
@@ -211,17 +217,23 @@ def main():
             zone_ms=[0]*5
             zone_found=set()
             for exercise in session.get("exercises") or []:
+                if not isinstance(exercise,dict):continue
+                diagnostics["exercises"]+=1
                 load=(exercise.get("trainingLoadReport") or {}).get("cardioLoad")
                 if not load_found and isinstance(load,(int,float)) and not isinstance(load,bool):
                     total_load+=load
                     load_found=True
                 for group in exercise.get("zones") or []:
-                    if group.get("type")!="ZONE_TYPE_HEART_RATE":continue
+                    if not isinstance(group,dict) or group.get("type")!="ZONE_TYPE_HEART_RATE":continue
+                    diagnostics["hr_zone_groups"]+=1
                     for i,z in enumerate((group.get("zones") or [])[:5]):
+                        if not isinstance(z,dict):continue
                         v=z.get("inZone")
-                        if isinstance(v,(int,float)) and v>=0:
+                        if isinstance(v,(int,float)) and not isinstance(v,bool) and v>=0:
                             zone_ms[i]+=v
                             zone_found.add(i)
+            if zone_found:diagnostics["sessions_with_zones"]+=1
+            if load_found:diagnostics["sessions_with_load"]+=1
             if load_found:
                 scalar("polar_cardio_load","Polar cardio load",date,total_load,"TRIMP",1,str(sid))
                 next(m for m in db["metrics"] if m["id"]=="polar_cardio_load")["classification"]="device-estimate"
@@ -233,6 +245,9 @@ def main():
                        components,date,values,str(sid))
 
     print("Polar detailed training days with responses:",detailed_success,"of",detailed_days)
+    print("Polar training coverage:",{k:diagnostics[k] for k in (
+        "detailed_sessions","exercises","hr_zone_groups",
+        "sessions_with_zones","sessions_with_load")})
     # Detailed activity, sleep and recovery use one-day calendar-date windows.
     for offset in range(detailed_days):
         day=now.date()-dt.timedelta(days=offset)
@@ -243,10 +258,13 @@ def main():
         # step samples are present. Multiple devices must not be added together.
         act=optional("/activity/list?"+qday+"&features=samples")
         for a in (act.get("activities") or {}).get("activityDays",[]):
+            if not isinstance(a,dict):continue
+            diagnostics["activity_days"]+=1
             date=a.get("date")
             if not date:continue
             devices=a.get("activitiesPerDevice") or []
             if len(devices)!=1:continue
+            diagnostics["single_device_days"]+=1
             totals=[]
             for sample in devices[0].get("activitySamples") or []:
                 steps=(sample.get("stepSamples") or {}).get("steps") or []
@@ -256,12 +274,18 @@ def main():
                 scalar("polar_steps","Polar daily steps",date,sum(totals),"steps",0)
         sleep=optional("/sleeps?"+qday+"&features=sleep-evaluation,sleep-score")
         for night in sleep.get("nightSleeps",[]):
+            if not isinstance(night,dict):continue
+            diagnostics["sleep_nights"]+=1
             date=night.get("sleepDate")
             if not date:continue
             evaluation=night.get("sleepEvaluation") or {}
+            if not isinstance(evaluation,dict):evaluation={}
+            if evaluation:diagnostics["sleep_evaluations"]+=1
             hours=duration_hours(evaluation.get("asleepDuration"))
             if hours is not None:scalar("polar_sleep_duration","Polar sleep duration",date,hours,"h",2)
             score=night.get("sleepScore") or {}
+            if not isinstance(score,dict):score={}
+            if score:diagnostics["sleep_scores"]+=1
             scalar("polar_sleep_score","Polar sleep score",date,score.get("sleepScore"),"points",0)
             phases=evaluation.get("phaseDurations") or {}
             for field,label in (("rem","REM"),("light","Light"),("deep","Deep"),("wake","Awake")):
@@ -289,6 +313,9 @@ def main():
                 ("recoveryIndicator","polar_recovery_indicator","Polar recovery indicator","",0)):
                 scalar(mid,label,date,night.get(field),unit,precision)
 
+    print("Polar activity/sleep coverage:",{k:diagnostics[k] for k in (
+        "activity_days","single_device_days","sleep_nights",
+        "sleep_evaluations","sleep_scores")})
     for m in db["metrics"]:
         m["records"].sort(key=lambda r:(r["date"],r.get("recordId","")))
         if m["id"].startswith("polar_"):
