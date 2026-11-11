@@ -118,11 +118,15 @@ def main():
             upsert(db,"polar_workout_hr","Polar workout heart rate",
                    [{"key":"average","label":"Average","unit":"bpm","precision":0},
                     {"key":"maximum","label":"Maximum","unit":"bpm","precision":0}],date,hrv,str(sid))
-    # Activity endpoint without features returns dates only. Don't invent step counts.
-    # Activity is optional: a failure here should not prevent workout import.
+    # The activity endpoint uses calendar dates (YYYY-MM-DD), unlike the
+    # training-sessions summary endpoint which accepts local date-times.
+    # This probe verifies access without inventing step counts.
+    activity_q=urllib.parse.urlencode({
+        "from":start.date().isoformat(),"to":(now.date()+dt.timedelta(days=1)).isoformat()
+    })
     try:
-        activity=request(ROOT+"/activity/list?"+q,token)
-        print("Polar activity response received:",isinstance(activity,dict))
+        activity=request(ROOT+"/activity/list?"+activity_q,token)
+        print("Polar activity date listing:",len((activity.get("activities") or {}).get("activityDays") or []),"days")
     except RuntimeError as e:
         print("Polar activity unavailable:",e)
 
@@ -182,8 +186,8 @@ def main():
     for offset in range(detailed_days):
         day=now.date()-dt.timedelta(days=offset)
         tomorrow=day+dt.timedelta(days=1)
-        qday=urllib.parse.urlencode({"from":day.isoformat()+"T00:00:00",
-                                    "to":tomorrow.isoformat()+"T00:00:00"})
+        qday=urllib.parse.urlencode({"from":day.isoformat(),
+                                    "to":tomorrow.isoformat()})
         detailed=optional("/training-sessions/list?"+qday+"&features=zones,training-load-report")
         for session in detailed.get("trainingSessions",[]):
             date=str(session.get("startTime",""))[:10]
@@ -219,8 +223,8 @@ def main():
     for offset in range(detailed_days):
         day=now.date()-dt.timedelta(days=offset)
         tomorrow=day+dt.timedelta(days=1)
-        qday=urllib.parse.urlencode({"from":day.isoformat()+"T00:00:00",
-                                    "to":tomorrow.isoformat()+"T00:00:00"})
+        qday=urllib.parse.urlencode({"from":day.isoformat(),
+                                    "to":tomorrow.isoformat()})
         # Daily activity samples: derive steps only when a single device's
         # step samples are present. Multiple devices must not be added together.
         act=optional("/activity/list?"+qday+"&features=samples")
