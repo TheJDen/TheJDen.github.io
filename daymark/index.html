@@ -18,7 +18,7 @@ const tr=el("tr");tr.append(el("th","Date"));for(const c of m.components)tr.appe
 for(const v of r.slice(-10).reverse()){const tr=el("tr");tr.append(el("td",day(v.date)+(v.status==="partial"?" (partial)":"")));for(const c of m.components)tr.append(el("td",v.values[c.key]===undefined?"—":fmt(v.values[c.key],c)+(c.unit?" "+c.unit:"")));$("rows").append(tr)}
 $("note").textContent=r.length?r.length+" observations · "+m.source+(m.lastSyncedOn?" · imported "+day(m.lastSyncedOn):"")+(r.some(v=>v.status==="partial")?" · includes a partial day":""):"No entries yet";if(!r.length){$("chart").append(el("div","No data yet","empty"));return}
 if(m.kind==="categorical"){const key=m.components[0].key,counts=new Map();for(const v of r){const val=String(v.values[key]);counts.set(val,(counts.get(val)||0)+1)}const box=el("div");for(const [v,n] of [...counts].sort((a,b)=>b[1]-a[1])){const row=el("div",v+" · "+n+" observations");row.style.padding="10px";box.append(row)}$("chart").append(box);return}
-const barIds=["steps","distance","active_energy","polar_steps","polar_active_energy","polar_activity","polar_workout_duration","polar_sleep_duration","polar_sleep_phases","polar_sleep_score","polar_nightly_hrv"];
+const barIds=["steps","distance","active_energy","polar_steps","polar_active_energy","polar_activity","polar_workout_duration","polar_workout_hr_zones","polar_cardio_load","polar_training_load","polar_sleep_duration","polar_sleep_phases","polar_sleep_score","polar_nightly_hrv"];
 const isBar=barIds.includes(m.id)||m.id.startsWith("polar_daily_")||m.id.startsWith("polar_sleep_");
 const isWeight=m.id==="weight";
 let showAvg=isWeight,showPoints=true;
