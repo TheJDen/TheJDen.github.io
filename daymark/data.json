@@ -457,8 +457,22 @@
         {
           "date": "2026-11-08",
           "values": {
-            "value": 22925
+            "value": 23165
           }
+        },
+        {
+          "date": "2026-11-09",
+          "values": {
+            "value": 10765
+          }
+        },
+        {
+          "date": "2026-11-10",
+          "values": {
+            "value": 7073
+          },
+          "status": "partial",
+          "note": "Day in progress at time of Apple Health import"
         }
       ]
     },
@@ -560,8 +574,22 @@
         {
           "date": "2026-11-08",
           "values": {
-            "value": 9.7
+            "value": 9.8
           }
+        },
+        {
+          "date": "2026-11-09",
+          "values": {
+            "value": 5
+          }
+        },
+        {
+          "date": "2026-11-10",
+          "values": {
+            "value": 3.3
+          },
+          "status": "partial",
+          "note": "Day in progress at time of Apple Health import"
         }
       ]
     },
@@ -663,8 +691,22 @@
         {
           "date": "2026-11-08",
           "values": {
-            "value": 714
+            "value": 725
           }
+        },
+        {
+          "date": "2026-11-09",
+          "values": {
+            "value": 368
+          }
+        },
+        {
+          "date": "2026-11-10",
+          "values": {
+            "value": 235
+          },
+          "status": "partial",
+          "note": "Day in progress at time of Apple Health import"
         }
       ]
     },
