@@ -489,9 +489,15 @@
           "values": {
             "value": 15918
           }
+        },
+        {
+          "date": "2026-11-14",
+          "values": {
+            "value": 16988
+          }
         }
       ],
-      "lastSyncedOn": "2026-11-14"
+      "lastSyncedOn": "2026-11-15"
     },
     {
       "id": "distance",
@@ -623,9 +629,15 @@
           "values": {
             "value": 7.2
           }
+        },
+        {
+          "date": "2026-11-14",
+          "values": {
+            "value": 7.7
+          }
         }
       ],
-      "lastSyncedOn": "2026-11-14"
+      "lastSyncedOn": "2026-11-15"
     },
     {
       "id": "active_energy",
@@ -757,9 +769,15 @@
           "values": {
             "value": 521
           }
+        },
+        {
+          "date": "2026-11-14",
+          "values": {
+            "value": 569
+          }
         }
       ],
-      "lastSyncedOn": "2026-11-14"
+      "lastSyncedOn": "2026-11-15"
     },
     {
       "id": "blood_pressure",
@@ -1201,7 +1219,7 @@
         {
           "date": "2026-11-09",
           "values": {
-            "value": 41.0
+            "value": 41
           },
           "recordId": "0e2d2e71-779e-6488-0a69-165a2c5cf542"
         },
@@ -2322,7 +2340,7 @@
         {
           "date": "2026-11-11",
           "values": {
-            "value": 0.0
+            "value": 0
           },
           "recordId": "0e2d6f48-099c-5fa1-95de-52d7c0c4bbae"
         }
@@ -2397,37 +2415,37 @@
         {
           "date": "2026-11-08",
           "values": {
-            "value": 83.0
+            "value": 83
           }
         },
         {
           "date": "2026-11-09",
           "values": {
-            "value": 97.0
+            "value": 97
           }
         },
         {
           "date": "2026-11-10",
           "values": {
-            "value": 94.0
+            "value": 94
           }
         },
         {
           "date": "2026-11-11",
           "values": {
-            "value": 108.0
+            "value": 108
           }
         },
         {
           "date": "2026-11-12",
           "values": {
-            "value": 86.0
+            "value": 86
           }
         },
         {
           "date": "2026-11-13",
           "values": {
-            "value": 93.0
+            "value": 93
           }
         }
       ],
@@ -2501,37 +2519,37 @@
         {
           "date": "2026-11-08",
           "values": {
-            "value": 1153.0
+            "value": 1153
           }
         },
         {
           "date": "2026-11-09",
           "values": {
-            "value": 1251.0
+            "value": 1251
           }
         },
         {
           "date": "2026-11-10",
           "values": {
-            "value": 1242.0
+            "value": 1242
           }
         },
         {
           "date": "2026-11-11",
           "values": {
-            "value": 1234.0
+            "value": 1234
           }
         },
         {
           "date": "2026-11-12",
           "values": {
-            "value": 1075.0
+            "value": 1075
           }
         },
         {
           "date": "2026-11-13",
           "values": {
-            "value": 1101.0
+            "value": 1101
           }
         }
       ],
@@ -2709,37 +2727,37 @@
         {
           "date": "2026-11-08",
           "values": {
-            "value": 5.0
+            "value": 5
           }
         },
         {
           "date": "2026-11-09",
           "values": {
-            "value": 5.0
+            "value": 5
           }
         },
         {
           "date": "2026-11-10",
           "values": {
-            "value": 6.0
+            "value": 6
           }
         },
         {
           "date": "2026-11-11",
           "values": {
-            "value": 3.0
+            "value": 3
           }
         },
         {
           "date": "2026-11-12",
           "values": {
-            "value": 4.0
+            "value": 4
           }
         },
         {
           "date": "2026-11-13",
           "values": {
-            "value": 4.0
+            "value": 4
           }
         }
       ],
