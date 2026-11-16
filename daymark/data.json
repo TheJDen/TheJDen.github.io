@@ -1,6 +1,6 @@
 {
   "schema": "open-daymark/1",
-  "updatedOn": "2026-11-15",
+  "updatedOn": "2026-11-16",
   "timezone": "America/Los_Angeles",
   "policy": {
     "interpolation": "forbidden",
@@ -495,9 +495,15 @@
           "values": {
             "value": 16988
           }
+        },
+        {
+          "date": "2026-11-15",
+          "values": {
+            "value": 14920
+          }
         }
       ],
-      "lastSyncedOn": "2026-11-15"
+      "lastSyncedOn": "2026-11-16"
     },
     {
       "id": "distance",
@@ -635,9 +641,15 @@
           "values": {
             "value": 7.7
           }
+        },
+        {
+          "date": "2026-11-15",
+          "values": {
+            "value": 5.8
+          }
         }
       ],
-      "lastSyncedOn": "2026-11-15"
+      "lastSyncedOn": "2026-11-16"
     },
     {
       "id": "active_energy",
@@ -775,9 +787,15 @@
           "values": {
             "value": 569
           }
+        },
+        {
+          "date": "2026-11-15",
+          "values": {
+            "value": 388
+          }
         }
       ],
-      "lastSyncedOn": "2026-11-15"
+      "lastSyncedOn": "2026-11-16"
     },
     {
       "id": "blood_pressure",
