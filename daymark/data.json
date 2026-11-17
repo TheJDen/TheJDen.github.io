@@ -1255,7 +1255,7 @@
         {
           "date": "2026-11-09",
           "values": {
-            "value": 41
+            "value": 41.0
           },
           "recordId": "0e2d2e71-779e-6488-0a69-165a2c5cf542"
         },
@@ -1391,9 +1391,37 @@
             "value": 17.6
           },
           "recordId": "0e2df3ef-4090-0f28-d497-d4734e1d13ff"
+        },
+        {
+          "date": "2026-11-16",
+          "values": {
+            "value": 23.6
+          },
+          "recordId": "0e2e1031-b090-2f81-bbf0-a9cadfba1ac4"
+        },
+        {
+          "date": "2026-11-16",
+          "values": {
+            "value": 30.6
+          },
+          "recordId": "0e2e1343-3090-2d2b-673e-a3b8bf3a1d6f"
+        },
+        {
+          "date": "2026-11-16",
+          "values": {
+            "value": 41.4
+          },
+          "recordId": "0e2e1504-3897-1d7a-6a61-7ea44fd0bc7f"
+        },
+        {
+          "date": "2026-11-16",
+          "values": {
+            "value": 18.1
+          },
+          "recordId": "0e2e16ec-7090-2aaa-bedd-b9e58fc0b09b"
         }
       ],
-      "lastSyncedOn": "2026-11-16",
+      "lastSyncedOn": "2026-11-17",
       "description": "Recorded Polar training sessions. The chart sums their durations by calendar day; the table preserves individual sessions."
     },
     {
@@ -1921,9 +1949,41 @@
             "maximum": 141
           },
           "recordId": "0e2df3ef-4090-0f28-d497-d4734e1d13ff"
+        },
+        {
+          "date": "2026-11-16",
+          "values": {
+            "average": 139,
+            "maximum": 161
+          },
+          "recordId": "0e2e1031-b090-2f81-bbf0-a9cadfba1ac4"
+        },
+        {
+          "date": "2026-11-16",
+          "values": {
+            "average": 124,
+            "maximum": 182
+          },
+          "recordId": "0e2e1343-3090-2d2b-673e-a3b8bf3a1d6f"
+        },
+        {
+          "date": "2026-11-16",
+          "values": {
+            "average": 144,
+            "maximum": 181
+          },
+          "recordId": "0e2e1504-3897-1d7a-6a61-7ea44fd0bc7f"
+        },
+        {
+          "date": "2026-11-16",
+          "values": {
+            "average": 116,
+            "maximum": 141
+          },
+          "recordId": "0e2e16ec-7090-2aaa-bedd-b9e58fc0b09b"
         }
       ],
-      "lastSyncedOn": "2026-11-16",
+      "lastSyncedOn": "2026-11-17",
       "description": "Reported workout mean and maximum heart rates. Daily display uses duration-weighted session averages and the highest recorded peak; individual workouts remain inspectable."
     },
     {
@@ -2382,9 +2442,37 @@
             "value": 123
           },
           "recordId": "0e2df3ef-4090-0f28-d497-d4734e1d13ff"
+        },
+        {
+          "date": "2026-11-16",
+          "values": {
+            "value": 205
+          },
+          "recordId": "0e2e1031-b090-2f81-bbf0-a9cadfba1ac4"
+        },
+        {
+          "date": "2026-11-16",
+          "values": {
+            "value": 230
+          },
+          "recordId": "0e2e1343-3090-2d2b-673e-a3b8bf3a1d6f"
+        },
+        {
+          "date": "2026-11-16",
+          "values": {
+            "value": 374
+          },
+          "recordId": "0e2e1504-3897-1d7a-6a61-7ea44fd0bc7f"
+        },
+        {
+          "date": "2026-11-16",
+          "values": {
+            "value": 127
+          },
+          "recordId": "0e2e16ec-7090-2aaa-bedd-b9e58fc0b09b"
         }
       ],
-      "lastSyncedOn": "2026-11-16",
+      "lastSyncedOn": "2026-11-17",
       "description": "Polar's model-estimated workout energy expenditure. Daily bars add only recorded sessions and should not be interpreted as measured metabolic expenditure."
     },
     {
@@ -2420,12 +2508,12 @@
         {
           "date": "2026-11-11",
           "values": {
-            "value": 0
+            "value": 0.0
           },
           "recordId": "0e2d6f48-099c-5fa1-95de-52d7c0c4bbae"
         }
       ],
-      "lastSyncedOn": "2026-11-16",
+      "lastSyncedOn": "2026-11-17",
       "description": "Polar session-distance field. Currently only zero readings were returned, so the metric is hidden from the main explorer but preserved in source JSON."
     },
     {
@@ -2507,35 +2595,41 @@
         {
           "date": "2026-11-10",
           "values": {
-            "value": 94
+            "value": 94.0
           }
         },
         {
           "date": "2026-11-11",
           "values": {
-            "value": 108
+            "value": 108.0
           }
         },
         {
           "date": "2026-11-12",
           "values": {
-            "value": 86
+            "value": 86.0
           }
         },
         {
           "date": "2026-11-13",
           "values": {
-            "value": 93
+            "value": 93.0
           }
         },
         {
           "date": "2026-11-15",
           "values": {
-            "value": 80
+            "value": 80.0
+          }
+        },
+        {
+          "date": "2026-11-16",
+          "values": {
+            "value": 101.0
           }
         }
       ],
-      "lastSyncedOn": "2026-11-16",
+      "lastSyncedOn": "2026-11-17",
       "description": "Polar's nightly root mean square of successive differences (RMSSD), in milliseconds. Most useful relative to the person's own trend, not as a standalone health grade."
     },
     {
@@ -2617,35 +2711,41 @@
         {
           "date": "2026-11-10",
           "values": {
-            "value": 1242
+            "value": 1242.0
           }
         },
         {
           "date": "2026-11-11",
           "values": {
-            "value": 1234
+            "value": 1234.0
           }
         },
         {
           "date": "2026-11-12",
           "values": {
-            "value": 1075
+            "value": 1075.0
           }
         },
         {
           "date": "2026-11-13",
           "values": {
-            "value": 1101
+            "value": 1101.0
           }
         },
         {
           "date": "2026-11-15",
           "values": {
-            "value": 1139
+            "value": 1139.0
+          }
+        },
+        {
+          "date": "2026-11-16",
+          "values": {
+            "value": 1273.0
           }
         }
       ],
-      "lastSyncedOn": "2026-11-16",
+      "lastSyncedOn": "2026-11-17",
       "description": "Polar's mean nighttime R–R interval in milliseconds, a device-derived measure of the time between successive heartbeats."
     },
     {
@@ -2753,9 +2853,15 @@
           "values": {
             "value": 0.26
           }
+        },
+        {
+          "date": "2026-11-16",
+          "values": {
+            "value": 8.37
+          }
         }
       ],
-      "lastSyncedOn": "2026-11-16",
+      "lastSyncedOn": "2026-11-17",
       "description": "Polar's relative autonomic nervous system status, compared with an individual baseline. This is a proprietary device score, not a clinical assessment."
     },
     {
@@ -2837,35 +2943,41 @@
         {
           "date": "2026-11-10",
           "values": {
-            "value": 6
+            "value": 6.0
           }
         },
         {
           "date": "2026-11-11",
           "values": {
-            "value": 3
+            "value": 3.0
           }
         },
         {
           "date": "2026-11-12",
           "values": {
-            "value": 4
+            "value": 4.0
           }
         },
         {
           "date": "2026-11-13",
           "values": {
-            "value": 4
+            "value": 4.0
           }
         },
         {
           "date": "2026-11-15",
           "values": {
-            "value": 4
+            "value": 4.0
+          }
+        },
+        {
+          "date": "2026-11-16",
+          "values": {
+            "value": 5.0
           }
         }
       ],
-      "lastSyncedOn": "2026-11-16",
+      "lastSyncedOn": "2026-11-17",
       "description": "Polar's ordinal Nightly Recharge recovery indicator. Interpret categories and changes in context rather than as a medical diagnosis."
     }
   ],
