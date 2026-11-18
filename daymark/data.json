@@ -556,9 +556,15 @@
           "values": {
             "value": 7948
           }
+        },
+        {
+          "date": "2026-11-17",
+          "values": {
+            "value": 12696
+          }
         }
       ],
-      "lastSyncedOn": "2026-11-17"
+      "lastSyncedOn": "2026-11-18"
     },
     {
       "id": "distance",
@@ -708,9 +714,15 @@
           "values": {
             "value": 3.4
           }
+        },
+        {
+          "date": "2026-11-17",
+          "values": {
+            "value": 5.3
+          }
         }
       ],
-      "lastSyncedOn": "2026-11-17"
+      "lastSyncedOn": "2026-11-18"
     },
     {
       "id": "active_energy",
@@ -860,9 +872,15 @@
           "values": {
             "value": 207
           }
+        },
+        {
+          "date": "2026-11-17",
+          "values": {
+            "value": 389
+          }
         }
       ],
-      "lastSyncedOn": "2026-11-17"
+      "lastSyncedOn": "2026-11-18"
     },
     {
       "id": "blood_pressure",
