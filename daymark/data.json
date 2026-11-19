@@ -1,6 +1,6 @@
 {
   "schema": "open-daymark/1",
-  "updatedOn": "2026-11-18",
+  "updatedOn": "2026-11-19",
   "timezone": "America/Los_Angeles",
   "policy": {
     "interpolation": "forbidden",
@@ -106,9 +106,27 @@
           }
         },
         {
+          "date": "2026-09-08",
+          "values": {
+            "value": 153.5
+          }
+        },
+        {
           "date": "2026-09-09",
           "values": {
             "value": 152.2
+          }
+        },
+        {
+          "date": "2026-09-10",
+          "values": {
+            "value": 151.3
+          }
+        },
+        {
+          "date": "2026-09-12",
+          "values": {
+            "value": 150
           }
         },
         {
@@ -175,6 +193,30 @@
           "date": "2026-09-23",
           "values": {
             "value": 149.4
+          }
+        },
+        {
+          "date": "2026-09-25",
+          "values": {
+            "value": 150.8
+          }
+        },
+        {
+          "date": "2026-09-26",
+          "values": {
+            "value": 152.9
+          }
+        },
+        {
+          "date": "2026-09-27",
+          "values": {
+            "value": 150.1
+          }
+        },
+        {
+          "date": "2026-09-28",
+          "values": {
+            "value": 147.6
           }
         },
         {
@@ -406,7 +448,7 @@
           }
         }
       ],
-      "lastSyncedOn": "2026-11-18"
+      "lastSyncedOn": "2026-11-19"
     },
     {
       "id": "steps",
@@ -562,9 +604,15 @@
           "values": {
             "value": 12696
           }
+        },
+        {
+          "date": "2026-11-18",
+          "values": {
+            "value": 12373
+          }
         }
       ],
-      "lastSyncedOn": "2026-11-18"
+      "lastSyncedOn": "2026-11-19"
     },
     {
       "id": "distance",
@@ -720,9 +768,15 @@
           "values": {
             "value": 5.3
           }
+        },
+        {
+          "date": "2026-11-18",
+          "values": {
+            "value": 5.5
+          }
         }
       ],
-      "lastSyncedOn": "2026-11-18"
+      "lastSyncedOn": "2026-11-19"
     },
     {
       "id": "active_energy",
@@ -878,9 +932,15 @@
           "values": {
             "value": 389
           }
+        },
+        {
+          "date": "2026-11-18",
+          "values": {
+            "value": 383
+          }
         }
       ],
-      "lastSyncedOn": "2026-11-18"
+      "lastSyncedOn": "2026-11-19"
     },
     {
       "id": "blood_pressure",
@@ -1497,7 +1557,7 @@
         {
           "date": "2026-11-17",
           "values": {
-            "value": 42.0
+            "value": 42
           },
           "recordId": "0e2e33ed-9c9e-edb4-eda9-72a8510015f3"
         },
@@ -2641,7 +2701,7 @@
         {
           "date": "2026-11-11",
           "values": {
-            "value": 0.0
+            "value": 0
           },
           "recordId": "0e2d6f48-099c-5fa1-95de-52d7c0c4bbae"
         },
@@ -2741,37 +2801,37 @@
         {
           "date": "2026-11-11",
           "values": {
-            "value": 108.0
+            "value": 108
           }
         },
         {
           "date": "2026-11-12",
           "values": {
-            "value": 86.0
+            "value": 86
           }
         },
         {
           "date": "2026-11-13",
           "values": {
-            "value": 93.0
+            "value": 93
           }
         },
         {
           "date": "2026-11-15",
           "values": {
-            "value": 80.0
+            "value": 80
           }
         },
         {
           "date": "2026-11-16",
           "values": {
-            "value": 101.0
+            "value": 101
           }
         },
         {
           "date": "2026-11-17",
           "values": {
-            "value": 92.0
+            "value": 92
           }
         }
       ],
@@ -2863,37 +2923,37 @@
         {
           "date": "2026-11-11",
           "values": {
-            "value": 1234.0
+            "value": 1234
           }
         },
         {
           "date": "2026-11-12",
           "values": {
-            "value": 1075.0
+            "value": 1075
           }
         },
         {
           "date": "2026-11-13",
           "values": {
-            "value": 1101.0
+            "value": 1101
           }
         },
         {
           "date": "2026-11-15",
           "values": {
-            "value": 1139.0
+            "value": 1139
           }
         },
         {
           "date": "2026-11-16",
           "values": {
-            "value": 1273.0
+            "value": 1273
           }
         },
         {
           "date": "2026-11-17",
           "values": {
-            "value": 1210.0
+            "value": 1210
           }
         }
       ],
@@ -3107,37 +3167,37 @@
         {
           "date": "2026-11-11",
           "values": {
-            "value": 3.0
+            "value": 3
           }
         },
         {
           "date": "2026-11-12",
           "values": {
-            "value": 4.0
+            "value": 4
           }
         },
         {
           "date": "2026-11-13",
           "values": {
-            "value": 4.0
+            "value": 4
           }
         },
         {
           "date": "2026-11-15",
           "values": {
-            "value": 4.0
+            "value": 4
           }
         },
         {
           "date": "2026-11-16",
           "values": {
-            "value": 5.0
+            "value": 5
           }
         },
         {
           "date": "2026-11-17",
           "values": {
-            "value": 4.0
+            "value": 4
           }
         }
       ],
